@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>생태 스피드 퀴즈!</title>
+    <style>
+        body { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #e8f5e9; font-family: 'Pretendard', sans-serif; overflow: hidden; }
+        h1 { color: #2e7d32; margin-bottom: 10px; }
+        
+        #image-container { width: 90%; max-width: 800px; height: 50vh; background-color: white; border-radius: 15px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+        #quiz-image { max-width: 100%; max-height: 100%; object-fit: contain; display: none; }
+        
+        #timer-container { width: 90%; max-width: 800px; height: 20px; background-color: #c8e6c9; margin-top: 20px; border-radius: 10px; overflow: hidden; }
+        #timer-bar { width: 100%; height: 100%; background-color: #4caf50; }
+        
+        #answer-text { font-size: 3rem; font-weight: 900; color: #d32f2f; margin-top: 20px; visibility: hidden; height: 50px; }
+        
+        .controls { margin-top: 30px; display: flex; gap: 10px; }
+        button { padding: 15px 30px; font-size: 1.2rem; font-weight: bold; cursor: pointer; border: none; border-radius: 8px; color: white; background-color: #2e7d32; transition: 0.2s; }
+        button:hover { background-color: #1b5e20; }
+        button:disabled { background-color: #a5d6a7; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <h1>🌿 생태 스피드 퀴즈</h1>
+    
+    <div id="image-container">
+        <h2 id="start-message">아래 '시작' 버튼을 누르면 퀴즈가 시작됩니다!</h2>
+        <img id="quiz-image" src="" alt="퀴즈 이미지">
+    </div>
+
+    <div id="timer-container">
+        <div id="timer-bar"></div>
+    </div>
+
+    <div id="answer-text">정답!</div>
+
+    <div class="controls">
+        <button id="start-btn" onclick="startQuiz()">시작</button>
+        <button id="next-btn" onclick="nextSlide()" disabled>다음 문제 (Space)</button>
+        <button id="answer-btn" onclick="showAnswer()" disabled>정답 보기 (Enter)</button>
+    </div>
+
+    <script>
+        // 💡 이곳에 원하는 이미지 주소와 정답을 입력하세요!
+        const quizData = [
+            { answer: "편백나무", img: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=800&q=80" },
+            { answer: "다람쥐", img: "https://images.unsplash.com/photo-1507666405895-422eee7d517f?w=800&q=80" },
+            { answer: "도토리", img: "https://images.unsplash.com/photo-1506807803488-8e11e6188e6a?w=800&q=80" },
+            { answer: "무당벌레", img: "https://images.unsplash.com/photo-1516368388481-44702167d4fc?w=800&q=80" }
+        ];
+
+        let currentIndex = -1;
+        let timerInterval;
+
+        const imgElement = document.getElementById('quiz-image');
+        const startMsg = document.getElementById('start-message');
+        const timerBar = document.getElementById('timer-bar');
+        const answerText = document.getElementById('answer-text');
+        
+        const startBtn = document.getElementById('start-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const answerBtn = document.getElementById('answer-btn');
+
+        function startQuiz() {
+            startBtn.style.display = 'none';
+            nextBtn.disabled = false;
+            answerBtn.disabled = false;
+            nextSlide();
+        }
+
+        function nextSlide() {
+            clearInterval(timerInterval);
+            currentIndex++;
+            
+            if (currentIndex >= quizData.length) {
+                alert("퀴즈가 모두 끝났습니다! 🎉");
+                location.reload();
+                return;
+            }
+
+            // 화면 초기화
+            startMsg.style.display = 'none';
+            imgElement.style.display = 'block';
+            imgElement.src = quizData[currentIndex].img;
+            answerText.visibility = 'hidden';
+            answerText.innerText = quizData[currentIndex].answer;
+            
+            // 3초 타이머 시작
+            startTimer(3);
+        }
+
+        function startTimer(seconds) {
+            let timeLeft = seconds * 100; // 0.01초 단위
+            timerBar.style.width = '100%';
+            timerBar.style.backgroundColor = '#4caf50';
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                let percentage = (timeLeft / (seconds * 100)) * 100;
+                timerBar.style.width = percentage + '%';
+
+                if (percentage < 30) {
+                    timerBar.style.backgroundColor = '#d32f2f'; // 30% 미만이면 빨간색으로 변경
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    showAnswer(); // 시간 초과 시 정답 강제 공개 (원치 않으면 이 줄 삭제)
+                }
+            }, 10);
+        }
+
+        function showAnswer() {
+            clearInterval(timerInterval);
+            answerText.style.visibility = 'visible';
+            timerBar.style.width = '0%';
+        }
+
+        // 키보드 조작 (스페이스바: 다음, 엔터: 정답)
+        document.addEventListener('keydown', (event) => {
+            if (event.code === 'Space' && !nextBtn.disabled) {
+                nextSlide();
+            } else if (event.code === 'Enter' && !answerBtn.disabled) {
+                showAnswer();
+            }
+        });
+    </script>
+</body>
+</html>
