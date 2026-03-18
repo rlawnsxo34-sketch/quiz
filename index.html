@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <style>
-        /* 기본적으로 한글 어절이 중간에 끊기지 않도록 설정 */
+        /* 💡 기본적으로 한글 어절이 중간에 끊기지 않도록 설정 */
         * { word-break: keep-all; box-sizing: border-box; }
         
         body { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #e8f5e9; font-family: 'Jua', sans-serif; overflow: hidden; user-select: none; }
@@ -25,7 +25,7 @@
         
         #answer-text { font-size: 5rem; color: #d32f2f; margin-top: 15px; visibility: hidden; height: 70px; text-shadow: 3px 3px 0 #fff; line-height: 1; text-align: center; }
         
-        /* 상단 상태바 (팀, 단계, 점수) */
+        /* 상단 상태바 (팀, 문제 진행률, 점수) */
         #info-bar { width: 95%; max-width: 1000px; display: none; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 15px; }
         #stage-text { color: #558b2f; margin: 0; font-size: 2rem; display: none; text-align: center; }
         #info-team { font-size: 1.8rem; color: #1b5e20; background: #c8e6c9; padding: 10px 20px; border-radius: 10px; box-shadow: 0 3px 0 #a5d6a7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px; }
@@ -36,7 +36,7 @@
         .ox-o { color: #1976d2; }
         .ox-x { color: #d32f2f; }
 
-        /* 시작 설정 화면 (💡 모바일 스크롤 기능을 위해 max-height와 overflow-y 추가) */
+        /* 시작 설정 화면 */
         #setup-area { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 10; padding: 30px; width: 100%; max-height: 100%; overflow-y: auto; margin: auto 0; }
         #setup-area h2 { font-size: 2.2rem; margin-bottom: 10px; color: #1b5e20; }
         .input-group { background-color: #f1f8e9; padding: 20px 30px; border-radius: 12px; border: 3px solid #a5d6a7; display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 1.6rem; color: #2e7d32; width: 100%; max-width: 600px; }
@@ -59,7 +59,6 @@
         .q-card .ans-input { color: #d32f2f; font-weight: bold; font-size: 1.4rem; margin-bottom: 8px; text-align: center; border: 2px dashed #ef9a9a; border-radius: 6px; padding: 6px; width: 100%; font-family: 'Jua', sans-serif; transition: 0.2s; }
         .q-card .ans-input:focus { outline: none; border: 2px solid #d32f2f; background-color: #ffebee; }
         .q-card .img-url-input { font-size: 0.95rem; margin-bottom: 10px; text-align: center; border: 2px solid #c8e6c9; border-radius: 6px; padding: 6px; width: 100%; font-family: sans-serif; }
-        .q-card .stg { color: #558b2f; font-size: 1.1rem; margin-bottom: 8px; }
         .upload-label { display: inline-block; background-color: #4caf50; color: white; padding: 10px 12px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; transition: 0.2s; margin-top: auto; box-shadow: 0 3px 0 #388e3c; }
         .upload-label:hover { background-color: #388e3c; transform: translateY(2px); box-shadow: 0 1px 0 #2e7d32; }
         .upload-label input[type="file"] { display: none; }
@@ -181,7 +180,6 @@
                 </div>
             </div>
             <div class="setup-btns">
-                <!-- 💡 모바일 환경에서만 <br>태그가 작동하여 글씨가 깔끔하게 두 줄로 나뉩니다 -->
                 <button onclick="toggleScoreboard()" class="btn-blue">🏆 팀별 점수<span class="desktop-space"> </span><br class="mobile-br">집계판</button>
                 <button onclick="toggleAllQuestions()" class="btn-orange">👀 전체 문제<span class="desktop-space"> </span><br class="mobile-br">확인 및 수정</button>
             </div>
@@ -241,7 +239,7 @@
     </div>
 
     <script>
-        // 💡 1단계 ~ 4단계 문제 데이터 통합 (총 50문제)
+        // 💡 문제 데이터 (단계 표시는 데이터 구조상 유지되나 화면에는 노출되지 않음)
         const quizData = [
             { stage: "1단계: 몸풀기", answer: "다람쥐", img: "./images/01.jpg" },
             { stage: "1단계: 몸풀기", answer: "청설모", img: "./images/02.jpg" },
@@ -336,7 +334,7 @@
 
         questionCountInput.max = quizData.length;
         questionCountInput.value = quizData.length; 
-        maxCountLabel.innerText = `/ 최대 ${quizData.length}`;
+        maxCountLabel.innerText = `/ 최대 ${quizData.length}문제`;
         totalQCount.innerText = quizData.length;
 
         function renderAllQuestions() {
@@ -344,8 +342,8 @@
             quizData.forEach((item, index) => {
                 const card = document.createElement('div');
                 card.className = 'q-card';
+                // 💡 전체 문제 미리보기 모달에서도 "N단계: 몸풀기" 텍스트를 제거했습니다.
                 card.innerHTML = `
-                    <div class="stg">${item.stage}</div>
                     <img id="preview-img-${index}" src="${item.img}" alt="문제 사진" onerror="this.src='https://via.placeholder.com/150?text=이미지+없음'">
                     <input type="text" class="ans-input" value="${item.answer}" onchange="handleAnswerChange(event, ${index})" placeholder="정답 입력">
                     <input type="text" id="img-url-${index}" class="img-url-input" value="${item.img}" onchange="handleImgUrlChange(event, ${index})" placeholder="사진 경로/URL">
@@ -534,8 +532,9 @@
                 return;
             }
 
+            // 💡 "1단계: 몸풀기" 같은 단계 표시를 제거하고 심플하게 '문제 1 / 50' 로만 표시합니다.
             stageText.style.display = 'block';
-            stageText.innerText = `${selectedQuizData[currentIndex].stage} (${currentIndex + 1} / ${selectedQuizData.length})`;
+            stageText.innerText = `문제 ${currentIndex + 1} / ${selectedQuizData.length}`;
 
             imgElement.style.display = 'block';
             imgElement.src = selectedQuizData[currentIndex].img;
