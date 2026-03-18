@@ -10,75 +10,83 @@
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <style>
         body { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #e8f5e9; font-family: 'Jua', sans-serif; overflow: hidden; user-select: none; }
-        .logo { height: 60px; margin-top: 10px; margin-bottom: 5px; object-fit: contain; }
-        h1 { color: #2e7d32; margin-top: 0; margin-bottom: 5px; font-size: 3rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
-        #stage-text { color: #558b2f; margin-top: 0; margin-bottom: 15px; font-size: 1.5rem; display: none; }
+        .logo { height: 80px; margin-top: 15px; margin-bottom: 10px; object-fit: contain; }
+        h1 { color: #2e7d32; margin-top: 0; margin-bottom: 10px; font-size: 4rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        #stage-text { color: #558b2f; margin-top: 0; margin-bottom: 15px; font-size: 2rem; display: none; }
         
-        #image-container { width: 90%; max-width: 800px; height: 50vh; background-color: white; border-radius: 15px; box-shadow: 0 12px 24px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; border: 4px solid #fff; }
+        #image-container { width: 95%; max-width: 1000px; height: 55vh; background-color: white; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; border: 6px solid #fff; }
         #quiz-image { max-width: 100%; max-height: 100%; object-fit: contain; display: none; }
         
-        #timer-container { width: 90%; max-width: 800px; height: 25px; background-color: #c8e6c9; margin-top: 25px; border-radius: 12px; overflow: hidden; border: 2px solid #a5d6a7; }
+        #timer-container { width: 95%; max-width: 1000px; height: 35px; background-color: #c8e6c9; margin-top: 30px; border-radius: 17px; overflow: hidden; border: 3px solid #a5d6a7; }
         #timer-bar { width: 100%; height: 100%; background-color: #4caf50; transition: width 0.1s linear, background-color 0.5s; }
         
-        #answer-text { font-size: 4rem; color: #d32f2f; margin-top: 15px; visibility: hidden; height: 60px; text-shadow: 2px 2px 0 #fff; }
+        #answer-text { font-size: 5rem; color: #d32f2f; margin-top: 20px; visibility: hidden; height: 75px; text-shadow: 3px 3px 0 #fff; line-height: 1; }
         
         /* 추가된 UI 스타일 (점수, O/X 등) */
-        #info-bar { width: 90%; max-width: 800px; display: none; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
-        #info-team { font-size: 1.5rem; color: #1b5e20; background: #c8e6c9; padding: 8px 15px; border-radius: 8px; box-shadow: 0 2px 0 #a5d6a7; }
-        #info-score { font-size: 1.5rem; color: #c62828; background: #ffcdd2; padding: 8px 15px; border-radius: 8px; box-shadow: 0 2px 0 #ef9a9a; }
+        #info-bar { width: 95%; max-width: 1000px; display: none; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; }
+        #info-team { font-size: 1.8rem; color: #1b5e20; background: #c8e6c9; padding: 10px 20px; border-radius: 10px; box-shadow: 0 3px 0 #a5d6a7; }
+        #info-score { font-size: 1.8rem; color: #c62828; background: #ffcdd2; padding: 10px 20px; border-radius: 10px; box-shadow: 0 3px 0 #ef9a9a; }
         
-        #ox-overlay { position: absolute; font-size: 15rem; z-index: 20; display: none; text-shadow: 0 0 30px rgba(255,255,255,1); pointer-events: none; }
+        #ox-overlay { position: absolute; font-size: 25rem; z-index: 20; display: none; text-shadow: 0 0 40px rgba(255,255,255,1); pointer-events: none; }
         .ox-o { color: #1976d2; }
         .ox-x { color: #d32f2f; }
 
-        #setup-area { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 15px; z-index: 10; padding: 20px; }
-        .input-group { background-color: #f1f8e9; padding: 15px 25px; border-radius: 10px; border: 2px solid #a5d6a7; display: flex; align-items: center; gap: 10px; font-size: 1.3rem; color: #2e7d32; }
-        .input-group input { font-family: 'Jua', sans-serif; font-size: 1.2rem; padding: 5px 10px; width: 80px; text-align: center; border: 2px solid #81c784; border-radius: 5px; outline: none; }
+        #setup-area { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 10; padding: 30px; }
+        #setup-area h2 { font-size: 2.2rem; margin-bottom: 10px; color: #1b5e20; }
+        .input-group { background-color: #f1f8e9; padding: 20px 30px; border-radius: 12px; border: 3px solid #a5d6a7; display: flex; align-items: center; gap: 15px; font-size: 1.6rem; color: #2e7d32; }
+        .input-group input { font-family: 'Jua', sans-serif; font-size: 1.5rem; padding: 8px 15px; width: 110px; text-align: center; border: 3px solid #81c784; border-radius: 8px; outline: none; }
         .input-group input:focus { border-color: #2e7d32; }
         
         /* 전체 문제 보기 모달 스타일 */
-        #all-questions-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 1000; display: none; align-items: center; justify-content: center; }
-        .modal-content { background-color: #e8f5e9; border-radius: 15px; width: 90%; max-width: 1000px; max-height: 85vh; padding: 25px; position: relative; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .close-btn { position: absolute; top: 15px; right: 25px; font-size: 2.5rem; color: #2e7d32; cursor: pointer; line-height: 1; }
-        #questions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; overflow-y: auto; padding-right: 10px; margin-top: 15px; }
-        .q-card { background: #fff; border: 2px solid #a5d6a7; border-radius: 10px; padding: 10px; text-align: center; display: flex; flex-direction: column; justify-content: flex-start; position: relative; }
-        .q-card img { width: 100%; height: 90px; object-fit: cover; border-radius: 5px; margin-bottom: 8px; background-color: #f5f5f5; }
+        #all-questions-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 1000; display: none; align-items: center; justify-content: center; }
+        .modal-content { background-color: #e8f5e9; border-radius: 20px; width: 90%; max-width: 1200px; max-height: 85vh; padding: 35px; position: relative; display: flex; flex-direction: column; box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
+        .close-btn { position: absolute; top: 20px; right: 30px; font-size: 3.5rem; color: #2e7d32; cursor: pointer; line-height: 1; transition: 0.2s; }
+        .close-btn:hover { color: #1b5e20; transform: scale(1.1); }
+        #questions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; overflow-y: auto; padding-right: 15px; margin-top: 20px; }
+        .q-card { background: #fff; border: 3px solid #a5d6a7; border-radius: 12px; padding: 15px; text-align: center; display: flex; flex-direction: column; justify-content: flex-start; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .q-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; background-color: #f5f5f5; border: 1px solid #e0e0e0; }
         
         /* 수정 가능한 정답 및 이미지 경로 입력창 스타일 */
-        .q-card .ans-input { color: #d32f2f; font-weight: bold; font-size: 1.2rem; margin-bottom: 5px; text-align: center; border: 1px dashed #ef9a9a; border-radius: 4px; padding: 4px; width: 100%; box-sizing: border-box; font-family: 'Jua', sans-serif; transition: 0.2s; }
-        .q-card .ans-input:focus { outline: none; border: 1px solid #d32f2f; background-color: #ffebee; }
-        .q-card .img-url-input { font-size: 0.8rem; margin-bottom: 8px; text-align: center; border: 1px solid #c8e6c9; border-radius: 4px; padding: 4px; width: 100%; box-sizing: border-box; font-family: sans-serif; }
+        .q-card .ans-input { color: #d32f2f; font-weight: bold; font-size: 1.4rem; margin-bottom: 8px; text-align: center; border: 2px dashed #ef9a9a; border-radius: 6px; padding: 6px; width: 100%; box-sizing: border-box; font-family: 'Jua', sans-serif; transition: 0.2s; }
+        .q-card .ans-input:focus { outline: none; border: 2px solid #d32f2f; background-color: #ffebee; }
+        .q-card .img-url-input { font-size: 0.95rem; margin-bottom: 10px; text-align: center; border: 2px solid #c8e6c9; border-radius: 6px; padding: 6px; width: 100%; box-sizing: border-box; font-family: sans-serif; }
         
-        .q-card .stg { color: #558b2f; font-size: 0.9rem; margin-bottom: 5px; }
+        .q-card .stg { color: #558b2f; font-size: 1.1rem; margin-bottom: 8px; }
         
         /* 이미지 업로드 버튼 스타일 */
-        .upload-label { display: inline-block; background-color: #4caf50; color: white; padding: 6px 10px; font-size: 0.9rem; border-radius: 5px; cursor: pointer; transition: 0.2s; margin-top: auto; box-shadow: 0 2px 0 #388e3c; }
-        .upload-label:hover { background-color: #388e3c; transform: translateY(1px); box-shadow: 0 1px 0 #2e7d32; }
+        .upload-label { display: inline-block; background-color: #4caf50; color: white; padding: 10px 12px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; transition: 0.2s; margin-top: auto; box-shadow: 0 3px 0 #388e3c; }
+        .upload-label:hover { background-color: #388e3c; transform: translateY(2px); box-shadow: 0 1px 0 #2e7d32; }
         .upload-label input[type="file"] { display: none; }
 
         /* 점수 집계판 모달 스타일 */
-        #scoreboard-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 2000; display: none; align-items: center; justify-content: center; }
-        .score-list-container { max-height: 50vh; overflow-y: auto; margin-top: 20px; text-align: left; padding-right: 10px; }
-        .score-item { display: flex; justify-content: space-between; font-size: 1.5rem; padding: 15px 10px; border-bottom: 2px dashed #a5d6a7; color: #1b5e20; align-items: center; }
-        .score-rank { font-weight: bold; width: 80px; font-size: 1.8rem; }
+        #scoreboard-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        .score-list-container { max-height: 55vh; overflow-y: auto; margin-top: 30px; text-align: left; padding-right: 15px; }
+        .score-item { display: flex; justify-content: space-between; font-size: 2rem; padding: 20px 15px; border-bottom: 3px dashed #a5d6a7; color: #1b5e20; align-items: center; }
+        .score-rank { font-weight: bold; width: 100px; font-size: 2.2rem; }
         .score-name { flex-grow: 1; text-align: center; }
-        .score-points { font-weight: bold; color: #d32f2f; font-size: 1.8rem; }
+        .score-points { font-weight: bold; color: #d32f2f; font-size: 2.2rem; }
 
         /* 커스텀 모달 스타일 (alert/confirm 대체) */
-        #custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; display: none; align-items: center; justify-content: center; }
-        .custom-modal { background: #fff; padding: 40px; border-radius: 15px; text-align: center; border: 4px solid #a5d6a7; min-width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        #custom-modal-msg { font-size: 1.8rem; color: #2e7d32; margin-top: 0; margin-bottom: 30px; white-space: pre-wrap; line-height: 1.4; font-family: 'Jua', sans-serif; }
-        .custom-modal-btns { display: flex; gap: 15px; justify-content: center; }
-        .custom-modal-btns button { font-family: 'Jua', sans-serif; padding: 12px 30px; font-size: 1.3rem; border-radius: 8px; }
-        #custom-btn-cancel { background-color: #757575; box-shadow: 0 4px 0 #424242; }
+        #custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; display: none; align-items: center; justify-content: center; }
+        .custom-modal { background: #fff; padding: 50px; border-radius: 20px; text-align: center; border: 5px solid #a5d6a7; min-width: 450px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
+        #custom-modal-msg { font-size: 2rem; color: #2e7d32; margin-top: 0; margin-bottom: 40px; white-space: pre-wrap; line-height: 1.5; font-family: 'Jua', sans-serif; }
+        .custom-modal-btns { display: flex; gap: 20px; justify-content: center; }
+        .custom-modal-btns button { font-family: 'Jua', sans-serif; padding: 15px 40px; font-size: 1.5rem; border-radius: 10px; }
+        #custom-btn-cancel { background-color: #757575; box-shadow: 0 5px 0 #424242; }
         #custom-btn-cancel:hover { background-color: #616161; box-shadow: 0 3px 0 #424242; }
-        #custom-btn-cancel:active { transform: translateY(3px); box-shadow: 0 1px 0 #424242; }
+        #custom-btn-cancel:active { transform: translateY(4px); box-shadow: 0 1px 0 #424242; }
 
-        .controls { margin-top: 20px; display: flex; gap: 15px; }
-        button { font-family: 'Jua', sans-serif; padding: 18px 35px; font-size: 1.4rem; cursor: pointer; border: none; border-radius: 10px; color: white; background-color: #2e7d32; transition: 0.2s; box-shadow: 0 4px 0 #1b5e20; }
-        button:hover { background-color: #1b5e20; transform: translateY(1px); box-shadow: 0 3px 0 #1b5e20; }
-        button:active { transform: translateY(3px); box-shadow: 0 1px 0 #1b5e20; }
-        button:disabled { background-color: #a5d6a7; box-shadow: 0 4px 0 #81c784; cursor: not-allowed; opacity: 0.7; }
+        .controls { margin-top: 30px; display: flex; gap: 20px; }
+        button { font-family: 'Jua', sans-serif; padding: 20px 40px; font-size: 1.6rem; cursor: pointer; border: none; border-radius: 12px; color: white; background-color: #2e7d32; transition: 0.2s; box-shadow: 0 5px 0 #1b5e20; }
+        button:hover { background-color: #1b5e20; transform: translateY(2px); box-shadow: 0 3px 0 #1b5e20; }
+        button:active { transform: translateY(5px); box-shadow: 0 0px 0 #1b5e20; }
+        button:disabled { background-color: #a5d6a7; box-shadow: 0 5px 0 #81c784; cursor: not-allowed; opacity: 0.7; }
+        
+        /* 스크롤바 커스텀 */
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: #e8f5e9; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #81c784; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4caf50; }
     </style>
 </head>
 <body>
@@ -89,7 +97,7 @@
     
     <div id="info-bar">
         <div id="info-team">팀: -</div>
-        <h2 id="stage-text" style="display: block; margin: 0; font-size: 1.5rem; color: #558b2f;"></h2>
+        <h2 id="stage-text" style="display: block; margin: 0; font-size: 2rem; color: #558b2f;"></h2>
         <div id="info-score">점수: 0</div>
     </div>
     
@@ -99,16 +107,16 @@
             <h2>아래 '시작' 버튼을 누르면 퀴즈가 시작됩니다!<br>(소리를 켜주세요 🔊)</h2>
             <div class="input-group">
                 <label for="team-name">참가 팀 이름:</label>
-                <input type="text" id="team-name" placeholder="입력 생략 가능" style="font-size: 1rem; width: 140px;">
+                <input type="text" id="team-name" placeholder="입력 생략 가능" style="width: 180px;">
             </div>
             <div class="input-group">
                 <label for="question-count">진행할 문제 수:</label>
                 <input type="number" id="question-count" min="1" value="50">
                 <span id="max-count-label"></span>
             </div>
-            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 5px;">
-                <button onclick="toggleScoreboard()" style="background-color: #1976d2; font-size: 1.1rem; padding: 10px 20px; box-shadow: 0 4px 0 #0d47a1;">🏆 팀별 점수 집계판</button>
-                <button onclick="toggleAllQuestions()" style="background-color: #f57c00; font-size: 1.1rem; padding: 10px 20px; box-shadow: 0 4px 0 #e65100;">👀 문제/이미지 미리보기</button>
+            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 10px;">
+                <button onclick="toggleScoreboard()" style="background-color: #1976d2; font-size: 1.3rem; padding: 15px 30px; box-shadow: 0 5px 0 #0d47a1;">🏆 팀별 점수 집계판</button>
+                <button onclick="toggleAllQuestions()" style="background-color: #f57c00; font-size: 1.3rem; padding: 15px 30px; box-shadow: 0 5px 0 #e65100;">👀 전체 문제 확인 및 수정</button>
             </div>
         </div>
         <img id="quiz-image" src="" alt="퀴즈 이미지">
@@ -137,7 +145,7 @@
         <div class="custom-modal">
             <p id="custom-modal-msg"></p>
             <div class="custom-modal-btns">
-                <button id="custom-btn-ok">확인</button>
+                <button id="custom-btn-ok" style="background-color: #2e7d32; box-shadow: 0 5px 0 #1b5e20;">확인</button>
                 <button id="custom-btn-cancel">취소</button>
             </div>
         </div>
@@ -147,8 +155,8 @@
     <div id="all-questions-modal">
         <div class="modal-content">
             <span class="close-btn" onclick="toggleAllQuestions()">&times;</span>
-            <h2 style="color: #2e7d32; margin-top: 0; border-bottom: 2px solid #a5d6a7; padding-bottom: 10px; margin-bottom: 5px;">전체 문제 목록 (총 <span id="total-q-count">50</span>문제)</h2>
-            <p style="color: #d32f2f; font-size: 0.95rem; margin: 0 0 10px 0;">⚠️ 모달창에서 수정한 정답과 사진은 <b>새로고침 시 초기화</b>됩니다. 영구 반영하려면 깃허브 코드나 폴더를 수정하세요.</p>
+            <h2 style="color: #2e7d32; margin-top: 0; border-bottom: 3px solid #a5d6a7; padding-bottom: 15px; margin-bottom: 10px; font-size: 2.5rem;">전체 문제 목록 (총 <span id="total-q-count">50</span>문제)</h2>
+            <p style="color: #d32f2f; font-size: 1.2rem; margin: 0 0 15px 0;">⚠️ 모달창에서 수정한 정답과 사진은 <b>새로고침 시 초기화</b>됩니다. 영구 반영하려면 깃허브 코드나 폴더를 수정하세요.</p>
             <div id="questions-grid">
                 <!-- 자바스크립트로 문제 카드가 생성됩니다 -->
             </div>
@@ -157,9 +165,9 @@
 
     <!-- 점수 집계판 모달 -->
     <div id="scoreboard-modal">
-        <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-content" style="max-width: 800px;">
             <span class="close-btn" onclick="toggleScoreboard()">&times;</span>
-            <h2 style="color: #2e7d32; margin-top: 0; border-bottom: 2px solid #a5d6a7; padding-bottom: 10px; margin-bottom: 5px; text-align: center; font-size: 2.5rem;">🏆 명예의 전당 (랭킹)</h2>
+            <h2 style="color: #2e7d32; margin-top: 0; border-bottom: 3px solid #a5d6a7; padding-bottom: 15px; margin-bottom: 10px; text-align: center; font-size: 3rem;">🏆 명예의 전당 (랭킹)</h2>
             <div class="score-list-container" id="score-list">
                 <!-- 자바스크립트로 점수 목록이 생성됩니다 -->
             </div>
@@ -381,7 +389,7 @@
         function renderScoreboard() {
             scoreList.innerHTML = "";
             if (teamScores.length === 0) {
-                scoreList.innerHTML = "<p style='text-align:center; font-size:1.5rem; color:#757575; padding: 20px;'>아직 기록된 점수가 없습니다.<br>퀴즈에 도전해 보세요!</p>";
+                scoreList.innerHTML = "<p style='text-align:center; font-size:2rem; color:#757575; padding: 40px;'>아직 기록된 점수가 없습니다.<br>퀴즈에 도전해 보세요!</p>";
                 return;
             }
             
