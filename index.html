@@ -9,10 +9,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <style>
+        /* 💡 기본적으로 한글 어절이 중간에 끊기지 않도록 설정 */
+        * { word-break: keep-all; box-sizing: border-box; }
+        
         body { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #e8f5e9; font-family: 'Jua', sans-serif; overflow: hidden; user-select: none; }
         .logo { height: 80px; margin-top: 15px; margin-bottom: 10px; object-fit: contain; }
         h1 { color: #2e7d32; margin-top: 0; margin-bottom: 10px; font-size: 4rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); text-align: center; line-height: 1.2; }
-        #stage-text { color: #558b2f; margin-top: 0; margin-bottom: 15px; font-size: 2rem; display: none; text-align: center; }
         
         #image-container { width: 95%; max-width: 1000px; height: 50vh; background-color: white; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; border: 6px solid #fff; }
         #quiz-image { max-width: 100%; max-height: 100%; object-fit: contain; display: none; }
@@ -22,111 +24,122 @@
         
         #answer-text { font-size: 5rem; color: #d32f2f; margin-top: 15px; visibility: hidden; height: 70px; text-shadow: 3px 3px 0 #fff; line-height: 1; text-align: center; }
         
-        /* 추가된 UI 스타일 (점수, O/X 등) */
-        #info-bar { width: 95%; max-width: 1000px; display: none; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; }
-        #info-team { font-size: 1.8rem; color: #1b5e20; background: #c8e6c9; padding: 10px 20px; border-radius: 10px; box-shadow: 0 3px 0 #a5d6a7; white-space: nowrap; }
+        /* 상단 상태바 (팀, 단계, 점수) */
+        #info-bar { width: 95%; max-width: 1000px; display: none; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 15px; }
+        #stage-text { color: #558b2f; margin: 0; font-size: 2rem; display: none; text-align: center; }
+        #info-team { font-size: 1.8rem; color: #1b5e20; background: #c8e6c9; padding: 10px 20px; border-radius: 10px; box-shadow: 0 3px 0 #a5d6a7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px; }
         #info-score { font-size: 1.8rem; color: #c62828; background: #ffcdd2; padding: 10px 20px; border-radius: 10px; box-shadow: 0 3px 0 #ef9a9a; white-space: nowrap; }
         
+        /* OX 마크 */
         #ox-overlay { position: absolute; font-size: 25rem; z-index: 20; display: none; text-shadow: 0 0 40px rgba(255,255,255,1); pointer-events: none; }
         .ox-o { color: #1976d2; }
         .ox-x { color: #d32f2f; }
 
-        #setup-area { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 10; padding: 30px; width: 100%; box-sizing: border-box; }
-        #setup-area h2 { font-size: 2.2rem; margin-bottom: 10px; color: #1b5e20; word-break: keep-all; }
-        .input-group { background-color: #f1f8e9; padding: 20px 30px; border-radius: 12px; border: 3px solid #a5d6a7; display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 1.6rem; color: #2e7d32; width: 100%; box-sizing: border-box; flex-wrap: wrap; }
-        .input-group input { font-family: 'Jua', sans-serif; font-size: 1.5rem; padding: 8px 15px; width: 110px; text-align: center; border: 3px solid #81c784; border-radius: 8px; outline: none; }
+        /* 시작 설정 화면 */
+        #setup-area { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 10; padding: 30px; width: 100%; }
+        #setup-area h2 { font-size: 2.2rem; margin-bottom: 10px; color: #1b5e20; }
+        .input-group { background-color: #f1f8e9; padding: 20px 30px; border-radius: 12px; border: 3px solid #a5d6a7; display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 1.6rem; color: #2e7d32; width: 100%; max-width: 600px; }
+        .input-group input { font-family: 'Jua', sans-serif; font-size: 1.5rem; padding: 8px 15px; width: 140px; text-align: center; border: 3px solid #81c784; border-radius: 8px; outline: none; }
         .input-group input:focus { border-color: #2e7d32; }
+        .setup-btns { display: flex; gap: 15px; justify-content: center; margin-top: 10px; width: 100%; max-width: 600px; }
+        .btn-blue { background-color: #1976d2; box-shadow: 0 5px 0 #0d47a1; }
+        .btn-blue:hover { background-color: #1565c0; box-shadow: 0 3px 0 #0d47a1; }
+        .btn-orange { background-color: #f57c00; box-shadow: 0 5px 0 #e65100; }
+        .btn-orange:hover { background-color: #ef6c00; box-shadow: 0 3px 0 #e65100; }
         
         /* 전체 문제 보기 모달 스타일 */
-        #all-questions-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 1000; display: none; align-items: center; justify-content: center; }
-        .modal-content { background-color: #e8f5e9; border-radius: 20px; width: 90%; max-width: 1200px; max-height: 85vh; padding: 35px; position: relative; display: flex; flex-direction: column; box-shadow: 0 15px 40px rgba(0,0,0,0.5); box-sizing: border-box; }
-        .close-btn { position: absolute; top: 20px; right: 30px; font-size: 3.5rem; color: #2e7d32; cursor: pointer; line-height: 1; transition: 0.2s; }
+        #all-questions-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background-color: #e8f5e9; border-radius: 20px; width: 100%; max-width: 1200px; max-height: 90vh; padding: 35px; position: relative; display: flex; flex-direction: column; box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
+        .close-btn { position: absolute; top: 15px; right: 25px; font-size: 3.5rem; color: #2e7d32; cursor: pointer; line-height: 1; transition: 0.2s; }
         .close-btn:hover { color: #1b5e20; transform: scale(1.1); }
         #questions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; overflow-y: auto; padding-right: 15px; margin-top: 20px; }
         .q-card { background: #fff; border: 3px solid #a5d6a7; border-radius: 12px; padding: 15px; text-align: center; display: flex; flex-direction: column; justify-content: flex-start; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .q-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; background-color: #f5f5f5; border: 1px solid #e0e0e0; }
-        
-        /* 수정 가능한 정답 및 이미지 경로 입력창 스타일 */
-        .q-card .ans-input { color: #d32f2f; font-weight: bold; font-size: 1.4rem; margin-bottom: 8px; text-align: center; border: 2px dashed #ef9a9a; border-radius: 6px; padding: 6px; width: 100%; box-sizing: border-box; font-family: 'Jua', sans-serif; transition: 0.2s; }
+        .q-card .ans-input { color: #d32f2f; font-weight: bold; font-size: 1.4rem; margin-bottom: 8px; text-align: center; border: 2px dashed #ef9a9a; border-radius: 6px; padding: 6px; width: 100%; font-family: 'Jua', sans-serif; transition: 0.2s; }
         .q-card .ans-input:focus { outline: none; border: 2px solid #d32f2f; background-color: #ffebee; }
-        .q-card .img-url-input { font-size: 0.95rem; margin-bottom: 10px; text-align: center; border: 2px solid #c8e6c9; border-radius: 6px; padding: 6px; width: 100%; box-sizing: border-box; font-family: sans-serif; }
-        
+        .q-card .img-url-input { font-size: 0.95rem; margin-bottom: 10px; text-align: center; border: 2px solid #c8e6c9; border-radius: 6px; padding: 6px; width: 100%; font-family: sans-serif; }
         .q-card .stg { color: #558b2f; font-size: 1.1rem; margin-bottom: 8px; }
-        
-        /* 이미지 업로드 버튼 스타일 */
         .upload-label { display: inline-block; background-color: #4caf50; color: white; padding: 10px 12px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; transition: 0.2s; margin-top: auto; box-shadow: 0 3px 0 #388e3c; }
         .upload-label:hover { background-color: #388e3c; transform: translateY(2px); box-shadow: 0 1px 0 #2e7d32; }
         .upload-label input[type="file"] { display: none; }
 
         /* 점수 집계판 모달 스타일 */
-        #scoreboard-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        #scoreboard-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .score-list-container { max-height: 55vh; overflow-y: auto; margin-top: 30px; text-align: left; padding-right: 15px; }
-        .score-item { display: flex; justify-content: space-between; font-size: 2rem; padding: 20px 15px; border-bottom: 3px dashed #a5d6a7; color: #1b5e20; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .score-rank { font-weight: bold; min-width: 100px; font-size: 2.2rem; white-space: nowrap; }
-        .score-name { flex-grow: 1; text-align: center; padding: 0 10px; word-break: break-all; }
-        .score-points { font-weight: bold; color: #d32f2f; font-size: 2.2rem; min-width: 100px; text-align: right; white-space: nowrap; }
+        .score-item { display: flex; justify-content: space-between; font-size: 2rem; padding: 20px 15px; border-bottom: 3px dashed #a5d6a7; color: #1b5e20; align-items: center; gap: 10px; }
+        .score-rank { font-weight: bold; min-width: 90px; font-size: 2.2rem; white-space: nowrap; }
+        .score-name { flex-grow: 1; text-align: center; padding: 0 10px; }
+        .score-points { font-weight: bold; color: #d32f2f; font-size: 2.2rem; min-width: 90px; text-align: right; white-space: nowrap; }
 
         /* 커스텀 모달 스타일 */
-        #custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
-        .custom-modal { background: #fff; padding: 50px 30px; border-radius: 20px; text-align: center; border: 5px solid #a5d6a7; min-width: 300px; max-width: 500px; width: 100%; box-shadow: 0 15px 40px rgba(0,0,0,0.5); box-sizing: border-box; }
-        #custom-modal-msg { font-size: 2rem; color: #2e7d32; margin-top: 0; margin-bottom: 40px; white-space: pre-wrap; line-height: 1.4; font-family: 'Jua', sans-serif; word-break: keep-all; }
-        .custom-modal-btns { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
-        .custom-modal-btns button { font-family: 'Jua', sans-serif; padding: 15px 30px; font-size: 1.5rem; border-radius: 10px; flex: 1; min-width: 120px; }
+        #custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .custom-modal { background: #fff; padding: 50px 30px; border-radius: 20px; text-align: center; border: 5px solid #a5d6a7; width: 100%; max-width: 450px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
+        #custom-modal-msg { font-size: 2rem; color: #2e7d32; margin-top: 0; margin-bottom: 40px; white-space: pre-wrap; line-height: 1.4; font-family: 'Jua', sans-serif; }
+        .custom-modal-btns { display: flex; gap: 20px; justify-content: center; }
+        .custom-modal-btns button { padding: 15px 30px; font-size: 1.5rem; border-radius: 10px; flex: 1; }
         #custom-btn-cancel { background-color: #757575; box-shadow: 0 5px 0 #424242; }
         #custom-btn-cancel:hover { background-color: #616161; box-shadow: 0 3px 0 #424242; }
         #custom-btn-cancel:active { transform: translateY(4px); box-shadow: 0 1px 0 #424242; }
 
-        .controls { margin-top: 20px; display: flex; gap: 15px; width: 95%; max-width: 1000px; justify-content: center; flex-wrap: wrap; }
-        /* 터치 반응 속도 개선 및 크기 설정 */
+        /* 하단 조작 컨트롤 (반응형 Grid) */
+        .controls { margin-top: 20px; display: flex; gap: 20px; width: 95%; max-width: 1000px; justify-content: center; }
         button { font-family: 'Jua', sans-serif; padding: 20px 30px; font-size: 1.6rem; cursor: pointer; border: none; border-radius: 12px; color: white; background-color: #2e7d32; transition: 0.2s; box-shadow: 0 5px 0 #1b5e20; touch-action: manipulation; }
         button:hover { background-color: #1b5e20; transform: translateY(2px); box-shadow: 0 3px 0 #1b5e20; }
         button:active { transform: translateY(5px); box-shadow: 0 0px 0 #1b5e20; }
         button:disabled { background-color: #a5d6a7; box-shadow: 0 5px 0 #81c784; cursor: not-allowed; opacity: 0.7; }
         
-        #btn-o, #btn-x { flex: 1; min-width: 140px; }
-        #answer-btn, #btn-stop { flex: 1; min-width: 200px; }
+        #btn-o, #btn-x { flex: 1; }
+        #answer-btn, #btn-stop { flex: 1; }
 
         /* 스크롤바 커스텀 */
         ::-webkit-scrollbar { width: 12px; }
         ::-webkit-scrollbar-track { background: #e8f5e9; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #81c784; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #4caf50; }
 
-        /* 📱 모바일 반응형 미디어 쿼리 추가 */
+        /* 📱 모바일 디바이스 최적화 (폭 768px 이하) */
         @media (max-width: 768px) {
-            .logo { height: 50px; margin-top: 10px; }
-            h1 { font-size: 2.8rem; margin-bottom: 5px; }
-            #stage-text { font-size: 1.4rem; margin-bottom: 10px; }
-            #info-bar { flex-wrap: wrap; justify-content: space-around; }
-            #info-team, #info-score { font-size: 1.3rem; padding: 8px 12px; }
+            .logo { height: 55px; margin-top: 10px; }
+            h1 { font-size: 2.5rem; margin-bottom: 5px; }
+            
+            /* 정보창 모바일 3단 분리 레이아웃 */
+            #info-bar { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 10px; margin-bottom: 10px; }
+            #stage-text { grid-column: 1 / 3; grid-row: 1; font-size: 1.5rem; margin-bottom: 0; }
+            #info-team { grid-column: 1; grid-row: 2; font-size: 1.3rem; padding: 8px 10px; max-width: none; }
+            #info-score { grid-column: 2; grid-row: 2; font-size: 1.3rem; padding: 8px 10px; text-align: center; }
             
             #image-container { height: 40vh; border-width: 4px; border-radius: 15px; }
-            #ox-overlay { font-size: 12rem; }
+            #ox-overlay { font-size: 15rem; }
             
             #timer-container { height: 20px; margin-top: 15px; }
-            #answer-text { font-size: 3rem; margin-top: 10px; height: 45px; }
+            #answer-text { font-size: 3.5rem; margin-top: 10px; height: 50px; }
             
-            #setup-area { padding: 15px; }
-            #setup-area h2 { font-size: 1.5rem; }
-            .input-group { padding: 12px 15px; font-size: 1.2rem; flex-direction: column; gap: 8px; }
-            .input-group input { width: 100%; max-width: 250px; font-size: 1.2rem; }
+            /* 시작 설정 화면 모바일화 */
+            #setup-area { padding: 15px; gap: 10px; }
+            #setup-area h2 { font-size: 1.4rem; }
+            .input-group { flex-direction: column; padding: 15px; gap: 8px; font-size: 1.4rem; }
+            .input-group input { width: 100%; font-size: 1.4rem; }
+            .setup-btns { flex-direction: column; gap: 10px; }
+            .setup-btns button { width: 100%; font-size: 1.3rem; padding: 15px; }
             
-            .controls { gap: 10px; }
-            button { font-size: 1.3rem; padding: 15px 20px; }
+            /* 💡 컨트롤 버튼 모바일 바둑판(2x2) 배열 */
+            .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+            button { width: 100%; padding: 15px 10px; font-size: 1.4rem; }
+            #start-btn { grid-column: 1 / 3; } /* 시작 버튼은 2칸 모두 차지 */
             
-            .modal-content { padding: 20px; max-height: 90vh; }
+            /* 모달창 모바일화 */
+            .modal-content { padding: 20px 15px; }
             .close-btn { top: 10px; right: 15px; font-size: 2.5rem; }
             #all-questions-modal h2, #scoreboard-modal h2 { font-size: 1.8rem; }
-            #questions-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 10px; }
+            #questions-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
             .q-card { padding: 10px; }
-            .q-card img { height: 90px; }
+            .q-card img { height: 100px; }
             .q-card .ans-input { font-size: 1.2rem; }
             
-            .score-item { font-size: 1.5rem; padding: 15px 10px; }
-            .score-rank, .score-points { font-size: 1.5rem; }
+            .score-item { font-size: 1.5rem; padding: 15px 5px; }
+            .score-rank, .score-points { font-size: 1.6rem; min-width: 70px; }
             
-            #custom-modal-msg { font-size: 1.5rem; margin-bottom: 25px; }
-            .custom-modal-btns button { font-size: 1.3rem; padding: 12px 20px; }
+            #custom-modal-msg { font-size: 1.6rem; }
+            .custom-modal-btns button { font-size: 1.3rem; padding: 12px 15px; }
         }
     </style>
 </head>
@@ -138,7 +151,7 @@
     
     <div id="info-bar">
         <div id="info-team">팀: -</div>
-        <h2 id="stage-text" style="display: block; margin: 0; font-size: 2rem; color: #558b2f;"></h2>
+        <h2 id="stage-text"></h2>
         <div id="info-score">점수: 0</div>
     </div>
     
@@ -157,9 +170,9 @@
                     <span id="max-count-label"></span>
                 </div>
             </div>
-            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px; flex-wrap: wrap;">
-                <button onclick="toggleScoreboard()" style="background-color: #1976d2; font-size: 1.2rem; padding: 12px 20px; box-shadow: 0 4px 0 #0d47a1;">🏆 팀별 점수 집계판</button>
-                <button onclick="toggleAllQuestions()" style="background-color: #f57c00; font-size: 1.2rem; padding: 12px 20px; box-shadow: 0 4px 0 #e65100;">👀 전체 문제 확인 및 수정</button>
+            <div class="setup-btns">
+                <button onclick="toggleScoreboard()" class="btn-blue">🏆 팀별 점수 집계판</button>
+                <button onclick="toggleAllQuestions()" class="btn-orange">👀 전체 문제 확인 및 수정</button>
             </div>
         </div>
         <img id="quiz-image" src="" alt="퀴즈 이미지">
@@ -172,7 +185,7 @@
     <div id="answer-text">정답!</div>
 
     <div class="controls">
-        <button id="start-btn" onclick="startQuiz()" style="width: 100%; max-width: 400px;">시작</button>
+        <button id="start-btn" onclick="startQuiz()">시작</button>
         <button id="btn-o" onclick="markAnswer(true)" style="background-color: #1976d2; display: none;">정답 O</button>
         <button id="btn-x" onclick="markAnswer(false)" style="background-color: #e53935; display: none;">오답 X</button>
         <button id="answer-btn" onclick="showAnswer()" disabled style="display: none;">정답 보기</button>
@@ -198,7 +211,7 @@
         <div class="modal-content">
             <span class="close-btn" onclick="toggleAllQuestions()">&times;</span>
             <h2 style="color: #2e7d32; margin-top: 0; border-bottom: 3px solid #a5d6a7; padding-bottom: 15px; margin-bottom: 10px; font-size: 2.2rem;">전체 문제 목록 (총 <span id="total-q-count">50</span>문제)</h2>
-            <p style="color: #d32f2f; font-size: 1.1rem; margin: 0 0 15px 0; word-break: keep-all;">⚠️ 모달창에서 수정한 정답과 사진은 <b>새로고침 시 초기화</b>됩니다. 영구 반영하려면 깃허브 코드를 수정하세요.</p>
+            <p style="color: #d32f2f; font-size: 1.1rem; margin: 0 0 15px 0;">⚠️ 모달창에서 수정한 정답과 사진은 <b>새로고침 시 초기화</b>됩니다. 영구 반영하려면 깃허브 코드를 수정하세요.</p>
             <div id="questions-grid">
                 <!-- 자바스크립트로 문제 카드가 생성됩니다 -->
             </div>
@@ -218,7 +231,6 @@
 
     <script>
         // 💡 1단계 ~ 4단계 문제 데이터 통합 (총 50문제)
-        // [깃허브 사용법] 깃허브 저장소에 'images' 폴더를 만들고 사진 이름을 01.jpg, 02.jpg... 로 올려주세요!
         const quizData = [
             { stage: "1단계: 몸풀기", answer: "다람쥐", img: "./images/01.jpg" },
             { stage: "1단계: 몸풀기", answer: "청설모", img: "./images/02.jpg" },
@@ -284,7 +296,6 @@
         let modalCancelCallback = null;
         const LIMIT_SEC = 3; 
 
-        // DOM 요소
         const imgElement = document.getElementById('quiz-image');
         const setupArea = document.getElementById('setup-area');
         const teamNameInput = document.getElementById('team-name');
@@ -314,7 +325,7 @@
 
         questionCountInput.max = quizData.length;
         questionCountInput.value = quizData.length; 
-        maxCountLabel.innerText = `/ 최대 ${quizData.length}문제`;
+        maxCountLabel.innerText = `/ 최대 ${quizData.length}`;
         totalQCount.innerText = quizData.length;
 
         function renderAllQuestions() {
