@@ -41,10 +41,38 @@
         .modal-content { background-color: #e8f5e9; border-radius: 15px; width: 90%; max-width: 1000px; max-height: 85vh; padding: 25px; position: relative; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .close-btn { position: absolute; top: 15px; right: 25px; font-size: 2.5rem; color: #2e7d32; cursor: pointer; line-height: 1; }
         #questions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; overflow-y: auto; padding-right: 10px; margin-top: 15px; }
-        .q-card { background: #fff; border: 2px solid #a5d6a7; border-radius: 10px; padding: 10px; text-align: center; display: flex; flex-direction: column; justify-content: flex-start; }
+        .q-card { background: #fff; border: 2px solid #a5d6a7; border-radius: 10px; padding: 10px; text-align: center; display: flex; flex-direction: column; justify-content: flex-start; position: relative; }
         .q-card img { width: 100%; height: 90px; object-fit: cover; border-radius: 5px; margin-bottom: 8px; background-color: #f5f5f5; }
-        .q-card .ans { color: #d32f2f; font-weight: bold; font-size: 1.3rem; margin: 0; }
+        
+        /* 수정 가능한 정답 및 이미지 경로 입력창 스타일 */
+        .q-card .ans-input { color: #d32f2f; font-weight: bold; font-size: 1.2rem; margin-bottom: 5px; text-align: center; border: 1px dashed #ef9a9a; border-radius: 4px; padding: 4px; width: 100%; box-sizing: border-box; font-family: 'Jua', sans-serif; transition: 0.2s; }
+        .q-card .ans-input:focus { outline: none; border: 1px solid #d32f2f; background-color: #ffebee; }
+        .q-card .img-url-input { font-size: 0.8rem; margin-bottom: 8px; text-align: center; border: 1px solid #c8e6c9; border-radius: 4px; padding: 4px; width: 100%; box-sizing: border-box; font-family: sans-serif; }
+        
         .q-card .stg { color: #558b2f; font-size: 0.9rem; margin-bottom: 5px; }
+        
+        /* 이미지 업로드 버튼 스타일 */
+        .upload-label { display: inline-block; background-color: #4caf50; color: white; padding: 6px 10px; font-size: 0.9rem; border-radius: 5px; cursor: pointer; transition: 0.2s; margin-top: auto; box-shadow: 0 2px 0 #388e3c; }
+        .upload-label:hover { background-color: #388e3c; transform: translateY(1px); box-shadow: 0 1px 0 #2e7d32; }
+        .upload-label input[type="file"] { display: none; }
+
+        /* 점수 집계판 모달 스타일 */
+        #scoreboard-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        .score-list-container { max-height: 50vh; overflow-y: auto; margin-top: 20px; text-align: left; padding-right: 10px; }
+        .score-item { display: flex; justify-content: space-between; font-size: 1.5rem; padding: 15px 10px; border-bottom: 2px dashed #a5d6a7; color: #1b5e20; align-items: center; }
+        .score-rank { font-weight: bold; width: 80px; font-size: 1.8rem; }
+        .score-name { flex-grow: 1; text-align: center; }
+        .score-points { font-weight: bold; color: #d32f2f; font-size: 1.8rem; }
+
+        /* 커스텀 모달 스타일 (alert/confirm 대체) */
+        #custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; display: none; align-items: center; justify-content: center; }
+        .custom-modal { background: #fff; padding: 40px; border-radius: 15px; text-align: center; border: 4px solid #a5d6a7; min-width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        #custom-modal-msg { font-size: 1.8rem; color: #2e7d32; margin-top: 0; margin-bottom: 30px; white-space: pre-wrap; line-height: 1.4; font-family: 'Jua', sans-serif; }
+        .custom-modal-btns { display: flex; gap: 15px; justify-content: center; }
+        .custom-modal-btns button { font-family: 'Jua', sans-serif; padding: 12px 30px; font-size: 1.3rem; border-radius: 8px; }
+        #custom-btn-cancel { background-color: #757575; box-shadow: 0 4px 0 #424242; }
+        #custom-btn-cancel:hover { background-color: #616161; box-shadow: 0 3px 0 #424242; }
+        #custom-btn-cancel:active { transform: translateY(3px); box-shadow: 0 1px 0 #424242; }
 
         .controls { margin-top: 20px; display: flex; gap: 15px; }
         button { font-family: 'Jua', sans-serif; padding: 18px 35px; font-size: 1.4rem; cursor: pointer; border: none; border-radius: 10px; color: white; background-color: #2e7d32; transition: 0.2s; box-shadow: 0 4px 0 #1b5e20; }
@@ -78,7 +106,10 @@
                 <input type="number" id="question-count" min="1" value="50">
                 <span id="max-count-label"></span>
             </div>
-            <button onclick="toggleAllQuestions()" style="background-color: #f57c00; font-size: 1.1rem; padding: 10px 20px; margin-top: 5px; box-shadow: 0 4px 0 #e65100;">👀 전체 문제 및 정답 미리보기</button>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 5px;">
+                <button onclick="toggleScoreboard()" style="background-color: #1976d2; font-size: 1.1rem; padding: 10px 20px; box-shadow: 0 4px 0 #0d47a1;">🏆 팀별 점수 집계판</button>
+                <button onclick="toggleAllQuestions()" style="background-color: #f57c00; font-size: 1.1rem; padding: 10px 20px; box-shadow: 0 4px 0 #e65100;">👀 문제/이미지 미리보기</button>
+            </div>
         </div>
         <img id="quiz-image" src="" alt="퀴즈 이미지">
     </div>
@@ -93,100 +124,129 @@
         <button id="start-btn" onclick="startQuiz()">시작</button>
         <button id="btn-o" onclick="markAnswer(true)" style="background-color: #1976d2; display: none;">정답 O (←)</button>
         <button id="btn-x" onclick="markAnswer(false)" style="background-color: #e53935; display: none;">오답 X (→)</button>
-        <button id="answer-btn" onclick="showAnswer()" disabled>정답 보기 (Enter)</button>
+        <!-- 💡 정답 보기 버튼 단축키 텍스트 Space로 변경 -->
+        <button id="answer-btn" onclick="showAnswer()" disabled>정답 보기 (Space)</button>
         <button id="btn-stop" onclick="stopQuiz()" style="background-color: #616161; display: none;">그만하기 (ESC)</button>
     </div>
 
     <audio id="snd-tick" src="ticking.mp3" preload="auto"></audio>
     <audio id="snd-ding" src="ding.mp3" preload="auto"></audio>
 
+    <!-- 커스텀 알림/확인 모달 -->
+    <div id="custom-modal-overlay">
+        <div class="custom-modal">
+            <p id="custom-modal-msg"></p>
+            <div class="custom-modal-btns">
+                <button id="custom-btn-ok">확인</button>
+                <button id="custom-btn-cancel">취소</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 전체 문제 보기 모달 -->
     <div id="all-questions-modal">
         <div class="modal-content">
             <span class="close-btn" onclick="toggleAllQuestions()">&times;</span>
-            <h2 style="color: #2e7d32; margin-top: 0; border-bottom: 2px solid #a5d6a7; padding-bottom: 10px;">전체 문제 목록 (총 <span id="total-q-count">50</span>문제)</h2>
+            <h2 style="color: #2e7d32; margin-top: 0; border-bottom: 2px solid #a5d6a7; padding-bottom: 10px; margin-bottom: 5px;">전체 문제 목록 (총 <span id="total-q-count">50</span>문제)</h2>
+            <p style="color: #d32f2f; font-size: 0.95rem; margin: 0 0 10px 0;">⚠️ 모달창에서 수정한 정답과 사진은 <b>새로고침 시 초기화</b>됩니다. 영구 반영하려면 깃허브 코드나 폴더를 수정하세요.</p>
             <div id="questions-grid">
                 <!-- 자바스크립트로 문제 카드가 생성됩니다 -->
             </div>
         </div>
     </div>
 
+    <!-- 점수 집계판 모달 -->
+    <div id="scoreboard-modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="close-btn" onclick="toggleScoreboard()">&times;</span>
+            <h2 style="color: #2e7d32; margin-top: 0; border-bottom: 2px solid #a5d6a7; padding-bottom: 10px; margin-bottom: 5px; text-align: center; font-size: 2.5rem;">🏆 명예의 전당 (랭킹)</h2>
+            <div class="score-list-container" id="score-list">
+                <!-- 자바스크립트로 점수 목록이 생성됩니다 -->
+            </div>
+        </div>
+    </div>
+
     <script>
         // 💡 1단계 ~ 4단계 문제 데이터 통합 (총 50문제)
+        // [깃허브 사용법] 깃허브 저장소에 'images' 폴더를 만들고 사진 이름을 01.jpg, 02.jpg... 로 올려주세요!
         const quizData = [
             // 1단계: 몸풀기용 (동물 - 8문제)
-            { stage: "1단계: 몸풀기", answer: "다람쥐", img: "" },
-            { stage: "1단계: 몸풀기", answer: "청설모", img: "" },
-            { stage: "1단계: 몸풀기", answer: "멧돼지", img: "" },
-            { stage: "1단계: 몸풀기", answer: "고라니", img: "" },
-            { stage: "1단계: 몸풀기", answer: "딱따구리", img: "" },
-            { stage: "1단계: 몸풀기", answer: "부엉이", img: "" },
-            { stage: "1단계: 몸풀기", answer: "개구리", img: "[Image of 개구리]" }, // 추가됨
-            { stage: "1단계: 몸풀기", answer: "토끼", img: "" },     // 추가됨
+            { stage: "1단계: 몸풀기", answer: "다람쥐", img: "./images/01.jpg" },
+            { stage: "1단계: 몸풀기", answer: "청설모", img: "./images/02.jpg" },
+            { stage: "1단계: 몸풀기", answer: "멧돼지", img: "./images/03.jpg" },
+            { stage: "1단계: 몸풀기", answer: "고라니", img: "./images/04.jpg" },
+            { stage: "1단계: 몸풀기", answer: "딱따구리", img: "./images/05.jpg" },
+            { stage: "1단계: 몸풀기", answer: "부엉이", img: "./images/06.jpg" },
+            { stage: "1단계: 몸풀기", answer: "개구리", img: "./images/07.jpg" }, 
+            { stage: "1단계: 몸풀기", answer: "토끼", img: "./images/08.jpg" },     
             
             // 1단계: 몸풀기용 (곤충/벌레 - 6문제)
-            { stage: "1단계: 몸풀기", answer: "무당벌레", img: "" },
-            { stage: "1단계: 몸풀기", answer: "장수풍뎅이", img: "" },
-            { stage: "1단계: 몸풀기", answer: "사슴벌레", img: "" },
-            { stage: "1단계: 몸풀기", answer: "나비", img: "" },
-            { stage: "1단계: 몸풀기", answer: "매미", img: "" },
-            { stage: "1단계: 몸풀기", answer: "지렁이", img: "" },
+            { stage: "1단계: 몸풀기", answer: "무당벌레", img: "./images/09.jpg" },
+            { stage: "1단계: 몸풀기", answer: "장수풍뎅이", img: "./images/10.jpg" },
+            { stage: "1단계: 몸풀기", answer: "사슴벌레", img: "./images/11.jpg" },
+            { stage: "1단계: 몸풀기", answer: "나비", img: "./images/12.jpg" },
+            { stage: "1단계: 몸풀기", answer: "매미", img: "./images/13.jpg" },
+            { stage: "1단계: 몸풀기", answer: "지렁이", img: "./images/14.jpg" },
             
             // 1단계: 몸풀기용 (식물/열매 - 6문제)
-            { stage: "1단계: 몸풀기", answer: "소나무", img: "" },
-            { stage: "1단계: 몸풀기", answer: "은행나무", img: "" },
-            { stage: "1단계: 몸풀기", answer: "단풍나무", img: "" },
-            { stage: "1단계: 몸풀기", answer: "도토리", img: "" },
-            { stage: "1단계: 몸풀기", answer: "솔방울", img: "" },
-            { stage: "1단계: 몸풀기", answer: "민들레", img: "" },
+            { stage: "1단계: 몸풀기", answer: "소나무", img: "./images/15.jpg" },
+            { stage: "1단계: 몸풀기", answer: "은행나무", img: "./images/16.jpg" },
+            { stage: "1단계: 몸풀기", answer: "단풍나무", img: "./images/17.jpg" },
+            { stage: "1단계: 몸풀기", answer: "도토리", img: "./images/18.jpg" },
+            { stage: "1단계: 몸풀기", answer: "솔방울", img: "./images/19.jpg" },
+            { stage: "1단계: 몸풀기", answer: "민들레", img: "./images/20.jpg" },
 
             // 2단계: 생태 탐험가용 (나무 - 4문제)
-            { stage: "2단계: 생태 탐험가", answer: "편백나무", img: "" },
-            { stage: "2단계: 생태 탐험가", answer: "자작나무", img: "" },
-            { stage: "2단계: 생태 탐험가", answer: "참나무", img: "" },
-            { stage: "2단계: 생태 탐험가", answer: "대나무", img: "" },
+            { stage: "2단계: 생태 탐험가", answer: "편백나무", img: "./images/21.jpg" },
+            { stage: "2단계: 생태 탐험가", answer: "자작나무", img: "./images/22.jpg" },
+            { stage: "2단계: 생태 탐험가", answer: "참나무", img: "./images/23.jpg" },
+            { stage: "2단계: 생태 탐험가", answer: "대나무", img: "./images/24.jpg" },
             
             // 2단계: 생태 탐험가용 (식물/버섯 - 5문제)
-            { stage: "2단계: 생태 탐험가", answer: "고사리", img: "" },
-            { stage: "2단계: 생태 탐험가", answer: "이끼", img: "" },
-            { stage: "2단계: 생태 탐험가", answer: "독버섯", img: "" },
-            { stage: "2단계: 생태 탐험가", answer: "표고버섯", img: "" },
-            { stage: "2단계: 생태 탐험가", answer: "칡덩굴", img: "" },
+            { stage: "2단계: 생태 탐험가", answer: "고사리", img: "./images/25.jpg" },
+            { stage: "2단계: 생태 탐험가", answer: "이끼", img: "./images/26.jpg" },
+            { stage: "2단계: 생태 탐험가", answer: "독버섯", img: "./images/27.jpg" },
+            { stage: "2단계: 생태 탐험가", answer: "표고버섯", img: "./images/28.jpg" },
+            { stage: "2단계: 생태 탐험가", answer: "칡덩굴", img: "./images/29.jpg" },
             
             // 2단계: 생태 탐험가용 (곤충/새 - 4문제)
-            { stage: "2단계: 생태 탐험가", answer: "호랑나비", img: "" },
-            { stage: "2단계: 생태 탐험가", answer: "물총새", img: "" },
-            { stage: "2단계: 생태 탐험가", answer: "파리매", img: "" },
-            { stage: "2단계: 생태 탐험가", answer: "하늘소", img: "" },
+            { stage: "2단계: 생태 탐험가", answer: "호랑나비", img: "./images/30.jpg" },
+            { stage: "2단계: 생태 탐험가", answer: "물총새", img: "./images/31.jpg" },
+            { stage: "2단계: 생태 탐험가", answer: "파리매", img: "./images/32.jpg" },
+            { stage: "2단계: 생태 탐험가", answer: "하늘소", img: "./images/33.jpg" },
 
             // 3단계: 숲속의 인물/캐릭터 (11문제)
-            { stage: "3단계: 캐릭터 및 인물", answer: "타잔", img: "" },
-            { stage: "3단계: 캐릭터 및 인물", answer: "곰돌이 푸", img: "" },
-            { stage: "3단계: 캐릭터 및 인물", answer: "팅커벨", img: "" },
-            { stage: "3단계: 캐릭터 및 인물", answer: "피터팬", img: "" },
-            { stage: "3단계: 캐릭터 및 인물", answer: "이웃집 토토로", img: "" },
-            { stage: "3단계: 캐릭터 및 인물", answer: "스머프", img: "" },
-            { stage: "3단계: 캐릭터 및 인물", answer: "숲 해설가", img: "" },
-            { stage: "3단계: 캐릭터 및 인물", answer: "등산객", img: "" },
-            { stage: "3단계: 캐릭터 및 인물", answer: "나무꾼", img: "" },
-            { stage: "3단계: 캐릭터 및 인물", answer: "식물학자", img: "" },
-            { stage: "3단계: 캐릭터 및 인물", answer: "파브르", img: "" },
+            { stage: "3단계: 캐릭터 및 인물", answer: "타잔", img: "./images/34.jpg" },
+            { stage: "3단계: 캐릭터 및 인물", answer: "곰돌이 푸", img: "./images/35.jpg" },
+            { stage: "3단계: 캐릭터 및 인물", answer: "팅커벨", img: "./images/36.jpg" },
+            { stage: "3단계: 캐릭터 및 인물", answer: "피터팬", img: "./images/37.jpg" },
+            { stage: "3단계: 캐릭터 및 인물", answer: "이웃집 토토로", img: "./images/38.jpg" },
+            { stage: "3단계: 캐릭터 및 인물", answer: "스머프", img: "./images/39.jpg" },
+            { stage: "3단계: 캐릭터 및 인물", answer: "숲해설가", img: "./images/40.jpg" },
+            { stage: "3단계: 캐릭터 및 인물", answer: "등산객", img: "./images/41.jpg" },
+            { stage: "3단계: 캐릭터 및 인물", answer: "나무꾼", img: "./images/42.jpg" },
+            { stage: "3단계: 캐릭터 및 인물", answer: "식물학자", img: "./images/43.jpg" },
+            { stage: "3단계: 캐릭터 및 인물", answer: "파브르", img: "./images/44.jpg" },
 
             // 4단계: 숲을 즐기는 도구 (6문제)
-            { stage: "4단계: 숲 체험 도구", answer: "루페", img: "" },
-            { stage: "4단계: 숲 체험 도구", answer: "청진기", img: "" },
-            { stage: "4단계: 숲 체험 도구", answer: "등산화", img: "" },
-            { stage: "4단계: 숲 체험 도구", answer: "배낭", img: "" },
-            { stage: "4단계: 숲 체험 도구", answer: "나침반", img: "" },
-            { stage: "4단계: 숲 체험 도구", answer: "도감", img: "" }
+            { stage: "4단계: 숲 체험 도구", answer: "루페", img: "./images/45.jpg" },
+            { stage: "4단계: 숲 체험 도구", answer: "청진기", img: "./images/46.jpg" },
+            { stage: "4단계: 숲 체험 도구", answer: "등산화", img: "./images/47.jpg" },
+            { stage: "4단계: 숲 체험 도구", answer: "배낭", img: "./images/48.jpg" },
+            { stage: "4단계: 숲 체험 도구", answer: "나침반", img: "./images/49.jpg" },
+            { stage: "4단계: 숲 체험 도구", answer: "도감", img: "./images/50.jpg" }
         ];
 
+        let teamScores = []; // 팀별 점수 기록을 저장할 배열
         let selectedQuizData = []; // 사용자가 입력한 개수만큼 랜덤 추출된 문제를 담을 배열
         let currentIndex = -1;
         let timerInterval;
         let score = 0;
         let currentTeamName = "";
         let isProcessing = false; // O/X 처리 중 중복 클릭 방지
+        let isPaused = false; // 모달 활성화 시 키보드 차단용
+        let modalOkCallback = null;
+        let modalCancelCallback = null;
         const LIMIT_SEC = 3; // 제한 시간(초)
 
         // DOM 요소
@@ -214,6 +274,9 @@
         const modal = document.getElementById('all-questions-modal');
         const questionsGrid = document.getElementById('questions-grid');
         const totalQCount = document.getElementById('total-q-count');
+        
+        const scoreboardModal = document.getElementById('scoreboard-modal');
+        const scoreList = document.getElementById('score-list');
 
         // 초기화: 전체 문제 수에 맞춰 최대값 및 라벨 업데이트
         questionCountInput.max = quizData.length;
@@ -224,18 +287,77 @@
         // 전체 문제 목록 렌더링 함수
         function renderAllQuestions() {
             questionsGrid.innerHTML = "";
-            quizData.forEach((item) => {
+            quizData.forEach((item, index) => {
                 const card = document.createElement('div');
                 card.className = 'q-card';
                 card.innerHTML = `
                     <div class="stg">${item.stage}</div>
-                    <img src="${item.img}" alt="${item.answer}" onerror="this.src='https://via.placeholder.com/150?text=No+Image'">
-                    <p class="ans">${item.answer}</p>
+                    <img id="preview-img-${index}" src="${item.img}" alt="문제 사진" onerror="this.src='https://via.placeholder.com/150?text=이미지+없음'">
+                    <input type="text" class="ans-input" value="${item.answer}" onchange="handleAnswerChange(event, ${index})" placeholder="정답 입력">
+                    <input type="text" id="img-url-${index}" class="img-url-input" value="${item.img}" onchange="handleImgUrlChange(event, ${index})" placeholder="사진 경로/URL">
+                    <label class="upload-label">
+                        + PC 이미지 등록
+                        <input type="file" accept="image/*" onchange="handleImageUpload(event, ${index})">
+                    </label>
                 `;
                 questionsGrid.appendChild(card);
             });
         }
         renderAllQuestions(); // 페이지 로드 시 백그라운드에서 미리 렌더링
+
+        // 📝 [추가] 모달에서 정답 텍스트를 직접 변경했을 때 데이터 업데이트
+        function handleAnswerChange(event, index) {
+            quizData[index].answer = event.target.value;
+        }
+
+        // 📝 [추가] 모달에서 이미지 주소를 직접 텍스트로 변경했을 때 데이터 및 썸네일 업데이트
+        function handleImgUrlChange(event, index) {
+            const newUrl = event.target.value;
+            quizData[index].img = newUrl;
+            document.getElementById(`preview-img-${index}`).src = newUrl;
+        }
+
+        // 개별 이미지 업로드 처리 함수 (PC 로컬 파일)
+        function handleImageUpload(event, index) {
+            const file = event.target.files[0];
+            if (file) {
+                // 선택한 로컬 파일을 임시 URL로 변환하여 적용
+                const imageUrl = URL.createObjectURL(file);
+                quizData[index].img = imageUrl;
+                document.getElementById(`preview-img-${index}`).src = imageUrl;
+                // 경로 입력창에도 임시 상태임을 표시
+                document.getElementById(`img-url-${index}`).value = "[PC 임시 적용됨]";
+            }
+        }
+
+        // 📝 [추가] 커스텀 모달 제어 함수
+        function showCustomModal(msg, isConfirm, onOk, onCancel) {
+            isPaused = true;
+            document.getElementById('custom-modal-msg').innerText = msg;
+            document.getElementById('custom-modal-overlay').style.display = 'flex';
+            
+            const btnCancel = document.getElementById('custom-btn-cancel');
+            if (isConfirm) {
+                btnCancel.style.display = 'block';
+            } else {
+                btnCancel.style.display = 'none';
+            }
+
+            modalOkCallback = onOk;
+            modalCancelCallback = onCancel;
+        }
+
+        document.getElementById('custom-btn-ok').onclick = () => {
+            document.getElementById('custom-modal-overlay').style.display = 'none';
+            isPaused = false;
+            if (modalOkCallback) modalOkCallback();
+        };
+
+        document.getElementById('custom-btn-cancel').onclick = () => {
+            document.getElementById('custom-modal-overlay').style.display = 'none';
+            isPaused = false;
+            if (modalCancelCallback) modalCancelCallback();
+        };
 
         // 모달 열기/닫기 토글 함수
         function toggleAllQuestions() {
@@ -244,6 +366,67 @@
             } else {
                 modal.style.display = "flex";
             }
+        }
+
+        // 📝 [추가] 점수 집계판 열기/닫기 및 렌더링 함수
+        function toggleScoreboard() {
+            if (scoreboardModal.style.display === "flex") {
+                scoreboardModal.style.display = "none";
+            } else {
+                renderScoreboard();
+                scoreboardModal.style.display = "flex";
+            }
+        }
+
+        function renderScoreboard() {
+            scoreList.innerHTML = "";
+            if (teamScores.length === 0) {
+                scoreList.innerHTML = "<p style='text-align:center; font-size:1.5rem; color:#757575; padding: 20px;'>아직 기록된 점수가 없습니다.<br>퀴즈에 도전해 보세요!</p>";
+                return;
+            }
+            
+            // 점수가 높은 순으로 정렬 (내림차순)
+            const sortedScores = [...teamScores].sort((a, b) => b.score - a.score);
+            
+            sortedScores.forEach((item, index) => {
+                let rankIcon = `${index + 1}위`;
+                if(index === 0) rankIcon = "🥇 1위";
+                else if(index === 1) rankIcon = "🥈 2위";
+                else if(index === 2) rankIcon = "🥉 3위";
+
+                scoreList.innerHTML += `
+                    <div class="score-item">
+                        <span class="score-rank">${rankIcon}</span>
+                        <span class="score-name">${item.team}</span>
+                        <span class="score-points">${item.score}점</span>
+                    </div>
+                `;
+            });
+        }
+
+        // 📝 [추가] 게임 초기화 함수 (새로고침 없이 시작 화면으로 복구)
+        function resetToStartScreen() {
+            currentIndex = -1;
+            isProcessing = false;
+            isPaused = false;
+            
+            setupArea.style.display = 'flex';
+            startBtn.style.display = 'block';
+            
+            infoBar.style.display = 'none';
+            btnO.style.display = 'none';
+            btnX.style.display = 'none';
+            btnStop.style.display = 'none';
+            
+            imgElement.style.display = 'none';
+            stageText.style.display = 'none';
+            answerText.style.visibility = 'hidden';
+            oxOverlay.style.display = 'none';
+            
+            timerBar.style.width = '100%';
+            timerBar.style.backgroundColor = '#4caf50';
+            
+            // 팀명 입력란 비우기 원하시면 활성화: teamNameInput.value = ""; 
         }
 
         // 오디오 요소
@@ -395,20 +578,37 @@
         }
 
         function stopQuiz() {
-            if (confirm("정말 퀴즈를 그만하시겠습니까?")) {
-                endQuiz(false); // 중간 종료
-            }
+            if (isProcessing || currentIndex < 0) return;
+
+            clearInterval(timerInterval);
+            stopSound(sndTick);
+            
+            // 기존 confirm() 대신 커스텀 모달 사용
+            showCustomModal("정말 퀴즈를 그만하시겠습니까?", true, 
+                () => {
+                    endQuiz(false); // 중간 종료
+                },
+                () => {
+                    startTimer(LIMIT_SEC); // 취소 시 타이머 재시작
+                }
+            );
         }
 
         function endQuiz(isCompleted) {
             clearInterval(timerInterval);
             stopSound(sndTick);
             
-            let msg = isCompleted ? "퀴즈가 모두 끝났습니다! 🎉\n\n" : "퀴즈가 중간에 종료되었습니다. 🛑\n\n";
-            msg += `[ ${currentTeamName} ] 팀의 최종 점수: ${score}점 (총 ${selectedQuizData.length}문제 중)`;
+            // 💡 퀴즈 종료 시 점수를 기록 배열에 추가
+            teamScores.push({ team: currentTeamName, score: score });
             
-            alert(msg);
-            location.reload(); // 처음으로 돌아가기
+            let msg = isCompleted ? "퀴즈가 모두 끝났습니다! 🎉\n\n" : "퀴즈가 중간에 종료되었습니다. 🛑\n\n";
+            msg += `[ ${currentTeamName} ] 팀의 최종 점수: ${score}점\n(총 ${selectedQuizData.length}문제 중)`;
+            
+            // 기존 alert() 대신 커스텀 모달 사용
+            showCustomModal(msg, false, () => {
+                resetToStartScreen(); // 새로고침(location.reload) 대신 화면 초기화 적용
+                toggleScoreboard();   // 안내창 닫히면 바로 점수 집계판 띄우기
+            });
         }
 
         function showAnswer(isTimeout = false) {
@@ -425,31 +625,42 @@
 
         // 키보드 조작
         document.addEventListener('keydown', (event) => {
-            if(currentIndex === -1 && event.code === 'Space') {
-                startQuiz();
+            // 💡 모달창이 떠있거나 일시정지 상태면 키보드 동작 방지
+            if (isPaused) return;
+            if (modal.style.display === 'flex') return;
+            if (scoreboardModal.style.display === 'flex') return;
+
+            // 💡 입력창(input)에서 텍스트 타이핑 중일 때는 퀴즈 단축키 작동 방지
+            if (event.target.tagName === 'INPUT') return;
+
+            // 💡 시작 전: 스페이스바나 엔터를 누르면 시작
+            if (currentIndex === -1) {
+                if(event.code === 'Space' || event.code === 'Enter') {
+                    event.preventDefault();
+                    startQuiz();
+                }
                 return;
             }
 
-            // O/X 단축키 (좌우 방향키) 및 종료
+            // 퀴즈 진행 중 단축키 제어
             if (currentIndex >= 0 && !isProcessing) {
                 if (event.code === 'ArrowLeft') {
                     event.preventDefault();
-                    markAnswer(true); // O 버튼
+                    markAnswer(true); // O 버튼 (왼쪽 방향키)
                 } else if (event.code === 'ArrowRight') {
                     event.preventDefault();
-                    markAnswer(false); // X 버튼
+                    markAnswer(false); // X 버튼 (오른쪽 방향키)
                 } else if (event.code === 'Escape') {
-                    stopQuiz(); // 그만하기
+                    stopQuiz(); // 그만하기 (ESC)
+                } else if (event.code === 'Space' && !answerBtn.disabled) {
+                    // 💡 Space 바를 누르면 정답 확인!
+                    event.preventDefault();
+                    showAnswer();
+                } else if (event.code === 'Enter') {
+                    // 💡 Enter 키를 누르면 패스 (오답 처리 후 빠르게 다음 문제로)
+                    event.preventDefault();
+                    markAnswer(false);
                 }
-            }
-
-            if (event.code === 'Space' && !isProcessing) {
-                // 스페이스바를 누르면 오답(패스) 처리로 빠르게 넘기기
-                event.preventDefault();
-                markAnswer(false);
-            } else if (event.code === 'Enter' && !answerBtn.disabled) {
-                event.preventDefault();
-                showAnswer();
             }
         });
     </script>
