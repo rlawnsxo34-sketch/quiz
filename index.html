@@ -42,10 +42,14 @@
         .input-group input[type="text"], .input-group input[type="number"] { font-family: 'Jua', sans-serif; font-size: 1.3rem; padding: 8px 15px; width: 140px; text-align: center; border: 3px solid #81c784; border-radius: 8px; outline: none; }
         .input-group input:focus { border-color: #2e7d32; }
         
-        /* 테마 선택 버튼 디자인 */
-        .theme-selector { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: 100%; }
-        .theme-btn { font-family: 'Jua', sans-serif; padding: 10px 20px; font-size: 1.3rem; border: 3px solid #bdbdbd; border-radius: 20px; background-color: #e0e0e0; color: #757575; cursor: pointer; transition: 0.2s; white-space: nowrap; box-shadow: none; opacity: 0.7; }
+        /* 테마 선택 버튼 디자인 (한 줄 가로 스크롤 적용) */
+        .theme-selector { display: flex; gap: 10px; flex-wrap: nowrap; justify-content: center; width: 100%; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
+        .theme-btn { font-family: 'Jua', sans-serif; padding: 10px 20px; font-size: 1.3rem; border: 3px solid #bdbdbd; border-radius: 20px; background-color: #e0e0e0; color: #757575; cursor: pointer; transition: 0.2s; white-space: nowrap; box-shadow: none; opacity: 0.7; flex: 0 0 auto; }
         .theme-btn.active { background-color: #4caf50; color: #fff; border-color: #388e3c; box-shadow: 0 4px 0 #2e7d32; transform: translateY(-2px); opacity: 1; }
+        /* 테마 선택 영역 스크롤바 미관 처리 */
+        .theme-selector::-webkit-scrollbar { height: 6px; }
+        .theme-selector::-webkit-scrollbar-track { background: transparent; }
+        .theme-selector::-webkit-scrollbar-thumb { background: #c8e6c9; border-radius: 10px; }
         
         /* 선택된 테마 텍스트 표시 영역 */
         #selected-theme-display { font-size: 1.3rem; margin-top: 5px; font-weight: normal; padding: 5px 15px; border-radius: 10px; transition: 0.3s; }
@@ -125,8 +129,9 @@
             .input-group { flex-direction: column; padding: 15px; gap: 10px; font-size: 1.3rem; }
             .input-group input[type="text"], .input-group input[type="number"] { width: 100%; max-width: none; font-size: 1.3rem; }
             
-            .theme-selector { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 8px; }
-            .theme-btn { font-size: 1.2rem; padding: 8px 5px; width: 100%; }
+            /* 💡 모바일 가로 스크롤 제거 및 한 줄에 꽉 차게 맞춤 조절 */
+            .theme-selector { display: flex; flex-wrap: nowrap; justify-content: space-between; overflow-x: hidden; width: 100%; gap: 4px; padding-bottom: 0; }
+            .theme-btn { font-size: 0.85rem; padding: 10px 0; width: 24%; flex: 1; letter-spacing: -0.5px; white-space: nowrap; word-break: keep-all; }
             #selected-theme-display { font-size: 1.1rem; padding: 5px 10px; }
 
             .setup-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
@@ -179,8 +184,8 @@
                 <label>퀴즈 테마 선택 (클릭하여 켜기/끄기)</label>
                 <div class="theme-selector">
                     <button class="theme-btn" data-theme="동물(곤충)" onclick="toggleTheme('동물(곤충)', this)">🦁 동물(곤충)</button>
-                    <button class="theme-btn" data-theme="식물" onclick="toggleTheme('식물', this)">🌿 식물</button>
-                    <button class="theme-btn" data-theme="나무" onclick="toggleTheme('나무', this)">🌲 나무</button>
+                    <button class="theme-btn" data-theme="식물(꽃)" onclick="toggleTheme('식물(꽃)', this)">🌿 식물(꽃)</button>
+                    <button class="theme-btn" data-theme="나무(과일)" onclick="toggleTheme('나무(과일)', this)">🌲 나무(과일)</button>
                     <button class="theme-btn" data-theme="캐릭터" onclick="toggleTheme('캐릭터', this)">🧚 캐릭터</button>
                 </div>
                 <div id="selected-theme-display"></div>
@@ -278,96 +283,76 @@
             { category: "동물(곤충)", answer: "족제비", img: "28.jpg" },
             { category: "동물(곤충)", answer: "까치", img: "29.jpg" },
             { category: "동물(곤충)", answer: "참새", img: "30.jpg" },
-            { category: "식물", answer: "민들레", img: "31.jpg" },
-            { category: "식물", answer: "고사리", img: "32.jpg" },
-            { category: "식물", answer: "이끼", img: "33.jpg" },
-            { category: "식물", answer: "독버섯", img: "34.jpg" },
-            { category: "식물", answer: "표고버섯", img: "35.jpg" },
-            { category: "식물", answer: "칡덩굴", img: "36.jpg" },
-            { category: "식물", answer: "제비꽃", img: "37.jpg" },
-            { category: "식물", answer: "개망초", img: "38.jpg" },
-            { category: "식물", answer: "토끼풀", img: "39.jpg" },
-            { category: "식물", answer: "강아지풀", img: "40.jpg" },
-            { category: "식물", answer: "쑥", img: "41.jpg" },
-            { category: "식물", answer: "냉이", img: "42.jpg" },
-            { category: "식물", answer: "엉겅퀴", img: "43.jpg" },
-            { category: "식물", answer: "질경이", img: "44.jpg" },
-            { category: "식물", answer: "구절초", img: "45.jpg" },
-            { category: "식물", answer: "달맞이꽃", img: "46.jpg" },
-            { category: "식물", answer: "억새", img: "47.jpg" },
-            { category: "식물", answer: "갈대", img: "48.jpg" },
-            { category: "식물", answer: "수국", img: "49.jpg" },
-            { category: "식물", answer: "나리", img: "50.jpg" },
-            { category: "식물", answer: "동백꽃", img: "51.jpg" },
-            { category: "식물", answer: "무궁화", img: "52.jpg" },
-            { category: "식물", answer: "진달래", img: "53.jpg" },
-            { category: "식물", answer: "철쭉", img: "54.jpg" },
-            { category: "식물", answer: "개나리", img: "55.jpg" },
-            { category: "식물", answer: "해바라기", img: "56.jpg" },
-            { category: "식물", answer: "코스모스", img: "57.jpg" },
-            { category: "식물", answer: "튤립", img: "58.jpg" },
-            { category: "식물", answer: "장미", img: "59.jpg" },
-            { category: "식물", answer: "백합", img: "60.jpg" },
-            { category: "나무", answer: "소나무", img: "61.jpg" },
-            { category: "나무", answer: "은행나무", img: "62.jpg" },
-            { category: "나무", answer: "단풍나무", img: "63.jpg" },
-            { category: "나무", answer: "편백나무", img: "64.jpg" },
-            { category: "나무", answer: "자작나무", img: "65.jpg" },
-            { category: "나무", answer: "참나무", img: "66.jpg" },
-            { category: "나무", answer: "대나무", img: "67.jpg" },
-            { category: "나무", answer: "벚나무", img: "68.jpg" },
-            { category: "나무", answer: "밤나무", img: "69.jpg" },
-            { category: "나무", answer: "감나무", img: "70.jpg" },
-            { category: "나무", answer: "사과나무", img: "71.jpg" },
-            { category: "나무", answer: "배나무", img: "72.jpg" },
-            { category: "나무", answer: "복숭아나무", img: "73.jpg" },
-            { category: "나무", answer: "포도나무", img: "74.jpg" },
-            { category: "나무", answer: "매화나무", img: "75.jpg" },
-            { category: "나무", answer: "살구나무", img: "76.jpg" },
-            { category: "나무", answer: "자두나무", img: "77.jpg" },
-            { category: "나무", answer: "모과나무", img: "78.jpg" },
-            { category: "나무", answer: "무화과나무", img: "79.jpg" },
-            { category: "나무", answer: "석류나무", img: "80.jpg" },
-            { category: "나무", answer: "호두나무", img: "81.jpg" },
-            { category: "나무", answer: "향나무", img: "82.jpg" },
-            { category: "나무", answer: "잣나무", img: "83.jpg" },
-            { category: "나무", answer: "전나무", img: "84.jpg" },
-            { category: "나무", answer: "구상나무", img: "85.jpg" },
-            { category: "나무", answer: "자귀나무", img: "86.jpg" },
-            { category: "나무", answer: "느티나무", img: "87.jpg" },
-            { category: "나무", answer: "버드나무", img: "88.jpg" },
-            { category: "나무", answer: "미루나무", img: "89.jpg" },
-            { category: "나무", answer: "오동나무", img: "90.jpg" },
+            { category: "식물(꽃)", answer: "민들레", img: "31.jpg" },
+            { category: "식물(꽃)", answer: "고사리", img: "32.jpg" },
+            { category: "식물(꽃)", answer: "이끼", img: "33.jpg" },
+            { category: "식물(꽃)", answer: "천남성", img: "34.jpg" },
+            { category: "식물(꽃)", answer: "표고버섯", img: "35.jpg" },
+            { category: "식물(꽃)", answer: "양귀비", img: "36.jpg" },
+            { category: "식물(꽃)", answer: "제비꽃", img: "37.jpg" },
+            { category: "식물(꽃)", answer: "개망초", img: "38.jpg" },
+            { category: "식물(꽃)", answer: "토끼풀", img: "39.jpg" },
+            { category: "식물(꽃)", answer: "강아지풀", img: "40.jpg" },
+            { category: "식물(꽃)", answer: "쑥", img: "41.jpg" },
+            { category: "식물(꽃)", answer: "냉이", img: "42.jpg" },
+            { category: "식물(꽃)", answer: "엉겅퀴", img: "43.jpg" },
+            { category: "식물(꽃)", answer: "데이지", img: "44.jpg" },
+            { category: "식물(꽃)", answer: "붓꽃(아이리스)", img: "45.jpg" },
+            { category: "식물(꽃)", answer: "달맞이꽃", img: "46.jpg" },
+            { category: "식물(꽃)", answer: "억새", img: "47.jpg" },
+            { category: "식물(꽃)", answer: "갈대", img: "48.jpg" },
+            { category: "식물(꽃)", answer: "수국", img: "49.jpg" },
+            { category: "식물(꽃)", answer: "나리", img: "50.jpg" },
+            { category: "식물(꽃)", answer: "동백꽃", img: "51.jpg" },
+            { category: "식물(꽃)", answer: "무궁화", img: "52.jpg" },
+            { category: "식물(꽃)", answer: "진달래", img: "53.jpg" },
+            { category: "식물(꽃)", answer: "철쭉", img: "54.jpg" },
+            { category: "식물(꽃)", answer: "개나리", img: "55.jpg" },
+            { category: "식물(꽃)", answer: "해바라기", img: "56.jpg" },
+            { category: "식물(꽃)", answer: "코스모스", img: "57.jpg" },
+            { category: "식물(꽃)", answer: "튤립", img: "58.jpg" },
+            { category: "식물(꽃)", answer: "장미", img: "59.jpg" },
+            { category: "식물(꽃)", answer: "백합", img: "60.jpg" },
+            { category: "나무(과일)", answer: "소나무", img: "61.jpg" },
+            { category: "나무(과일)", answer: "은행나무", img: "62.jpg" },
+            { category: "나무(과일)", answer: "단풍나무", img: "63.jpg" },
+            { category: "나무(과일)", answer: "편백나무", img: "64.jpg" },
+            { category: "나무(과일)", answer: "자작나무", img: "65.jpg" },
+            { category: "나무(과일)", answer: "참나무", img: "66.jpg" },
+            { category: "나무(과일)", answer: "대나무", img: "67.jpg" },
+            { category: "나무(과일)", answer: "벚나무", img: "68.jpg" },
+            { category: "나무(과일)", answer: "밤송이", img: "69.jpg" },
+            { category: "나무(과일)", answer: "감나무", img: "70.jpg" },
+            { category: "나무(과일)", answer: "사과나무", img: "71.jpg" },
+            { category: "나무(과일)", answer: "배나무", img: "72.jpg" },
+            { category: "나무(과일)", answer: "복숭아", img: "73.jpg" },
+            { category: "나무(과일)", answer: "포도나무", img: "74.jpg" },
+            { category: "나무(과일)", answer: "매화나무", img: "75.jpg" },
+            { category: "나무(과일)", answer: "살구나무", img: "76.jpg" },
+            { category: "나무(과일)", answer: "자두", img: "77.jpg" },
+            { category: "나무(과일)", answer: "모과", img: "78.jpg" },
+            { category: "나무(과일)", answer: "무화과", img: "79.jpg" },
+            { category: "나무(과일)", answer: "석류", img: "80.jpg" },
+            { category: "나무(과일)", answer: "호두", img: "81.jpg" },
+            { category: "나무(과일)", answer: "떡갈나무", img: "82.jpg" },
+            { category: "나무(과일)", answer: "잣나무", img: "83.jpg" },
+            { category: "나무(과일)", answer: "전나무", img: "84.jpg" },
+            { category: "나무(과일)", answer: "구상나무", img: "85.jpg" },
+            { category: "나무(과일)", answer: "자귀나무", img: "86.jpg" },
+            { category: "나무(과일)", answer: "느티나무", img: "87.jpg" },
+            { category: "나무(과일)", answer: "버드나무", img: "88.jpg" },
+            { category: "나무(과일)", answer: "호랑가시나무", img: "89.jpg" },
+            { category: "나무(과일)", answer: "오동나무", img: "90.jpg" },
             { category: "캐릭터", answer: "타잔", img: "91.jpg" },
             { category: "캐릭터", answer: "곰돌이 푸", img: "92.jpg" },
             { category: "캐릭터", answer: "팅커벨", img: "93.jpg" },
-            { category: "캐릭터", answer: "피터팬", img: "94.jpg" },
+            { category: "캐릭터", answer: "뽀로로", img: "94.jpg" },
             { category: "캐릭터", answer: "이웃집 토토로", img: "95.jpg" },
             { category: "캐릭터", answer: "스머프", img: "96.jpg" },
-            { category: "캐릭터", answer: "숲해설가", img: "97.jpg" },
-            { category: "캐릭터", answer: "등산객", img: "98.jpg" },
-            { category: "캐릭터", answer: "나무꾼", img: "99.jpg" },
-            { category: "캐릭터", answer: "식물학자", img: "100.jpg" },
-            { category: "캐릭터", answer: "파브르", img: "101.jpg" },
-            { category: "캐릭터", answer: "백설공주", img: "102.jpg" },
-            { category: "캐릭터", answer: "뽀로로", img: "103.jpg" },
-            { category: "캐릭터", answer: "크롱", img: "104.jpg" },
-            { category: "캐릭터", answer: "루피", img: "105.jpg" },
-            { category: "캐릭터", answer: "에디", img: "106.jpg" },
-            { category: "캐릭터", answer: "포비", img: "107.jpg" },
-            { category: "캐릭터", answer: "해리", img: "108.jpg" },
-            { category: "캐릭터", answer: "아기돼지 삼형제", img: "109.jpg" },
-            { category: "캐릭터", answer: "빨간모자", img: "110.jpg" },
-            { category: "캐릭터", answer: "심바", img: "111.jpg" },
-            { category: "캐릭터", answer: "밤비", img: "112.jpg" },
-            { category: "캐릭터", answer: "피카츄", img: "113.jpg" },
-            { category: "캐릭터", answer: "꼬부기", img: "114.jpg" },
-            { category: "캐릭터", answer: "파이리", img: "115.jpg" },
-            { category: "캐릭터", answer: "이상해씨", img: "116.jpg" },
-            { category: "캐릭터", answer: "도라에몽", img: "117.jpg" },
-            { category: "캐릭터", answer: "마리오", img: "118.jpg" },
-            { category: "캐릭터", answer: "루이지", img: "119.jpg" },
-            { category: "캐릭터", answer: "짱구", img: "120.jpg" }
+            { category: "캐릭터", answer: "백설공주", img: "97.jpg" },
+            { category: "캐릭터", answer: "슈퍼마리오", img: "98.jpg" },
+            { category: "캐릭터", answer: "피카츄", img: "99.jpg" },
+            { category: "캐릭터", answer: "도라에몽", img: "100.jpg" }
         ];
 
         let selectedThemes = []; 
