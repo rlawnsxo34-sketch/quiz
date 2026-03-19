@@ -4,57 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>생태 스피드 퀴즈! (사운드 포함)</title>
+    <!-- 구글 폰트 적용 (동글동글한 Jua 글씨체) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <style>
+        /* 기본적으로 한글 어절이 중간에 끊기지 않도록 설정 */
         * { word-break: keep-all; box-sizing: border-box; }
-        body { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #e8f5e9; font-family: 'Jua', sans-serif; overflow: hidden; user-select: none; }
-        .logo { height: 80px; margin-top: 15px; margin-bottom: 10px; object-fit: contain; }
-        h1 { color: #2e7d32; margin-top: 0; margin-bottom: 10px; font-size: 4rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); text-align: center; line-height: 1.2; }
         
-        #image-container { width: 95%; max-width: 1000px; height: 50vh; background-color: white; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; border: 6px solid #fff; }
+        body { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #e8f5e9; font-family: 'Jua', sans-serif; overflow: hidden; user-select: none; }
+        .logo { height: 70px; margin-top: 10px; margin-bottom: 10px; object-fit: contain; }
+        h1 { color: #2e7d32; margin-top: 0; margin-bottom: 10px; font-size: 3.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); text-align: center; line-height: 1.2; }
+        
+        #image-container { width: 95%; max-width: 1000px; height: 45vh; background-color: white; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; border: 6px solid #fff; }
         #quiz-image { max-width: 100%; max-height: 100%; object-fit: contain; display: none; margin: auto; }
         
-        #timer-container { width: 95%; max-width: 1000px; height: 35px; background-color: #c8e6c9; margin-top: 20px; border-radius: 17px; overflow: hidden; border: 3px solid #a5d6a7; }
+        #timer-container { width: 95%; max-width: 1000px; height: 30px; background-color: #c8e6c9; margin-top: 15px; border-radius: 15px; overflow: hidden; border: 3px solid #a5d6a7; }
         #timer-bar { width: 100%; height: 100%; background-color: #4caf50; transition: width 0.1s linear, background-color 0.5s; }
         
-        #answer-text { font-size: 5rem; color: #d32f2f; margin-top: 15px; visibility: hidden; height: 70px; text-shadow: 3px 3px 0 #fff; line-height: 1; text-align: center; }
+        #answer-text { font-size: 5rem; color: #d32f2f; margin-top: 10px; visibility: hidden; height: 60px; text-shadow: 3px 3px 0 #fff; line-height: 1; text-align: center; }
         
-        #info-bar { width: 95%; max-width: 1000px; display: none; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 15px; }
-        #stage-text { color: #558b2f; margin: 0; font-size: 2rem; display: none; text-align: center; }
-        #info-team { font-size: 1.8rem; color: #1b5e20; background: #c8e6c9; padding: 10px 20px; border-radius: 10px; box-shadow: 0 3px 0 #a5d6a7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px; }
-        #info-score { font-size: 1.8rem; color: #c62828; background: #ffcdd2; padding: 10px 20px; border-radius: 10px; box-shadow: 0 3px 0 #ef9a9a; white-space: nowrap; }
+        /* 상단 상태바 */
+        #info-bar { width: 95%; max-width: 1000px; display: none; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 15px; }
+        #stage-text { color: #558b2f; margin: 0; font-size: 1.8rem; display: none; text-align: center; }
+        #info-team { font-size: 1.6rem; color: #1b5e20; background: #c8e6c9; padding: 8px 20px; border-radius: 10px; box-shadow: 0 3px 0 #a5d6a7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px; }
+        #info-score { font-size: 1.6rem; color: #c62828; background: #ffcdd2; padding: 8px 20px; border-radius: 10px; box-shadow: 0 3px 0 #ef9a9a; white-space: nowrap; }
         
-        #ox-overlay { position: absolute; font-size: 25rem; z-index: 20; display: none; text-shadow: 0 0 40px rgba(255,255,255,1); pointer-events: none; }
+        /* OX 마크 */
+        #ox-overlay { position: absolute; font-size: 20rem; z-index: 20; display: none; text-shadow: 0 0 40px rgba(255,255,255,1); pointer-events: none; }
         .ox-o { color: #1976d2; }
         .ox-x { color: #d32f2f; }
 
-        #setup-area { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 10; padding: 30px; width: 100%; max-height: 100%; overflow-y: auto; margin: auto 0; }
-        #setup-area h2 { font-size: 2.2rem; margin-bottom: 10px; color: #1b5e20; }
-        .input-group { background-color: #f1f8e9; padding: 20px 30px; border-radius: 12px; border: 3px solid #a5d6a7; display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 1.6rem; color: #2e7d32; width: 100%; max-width: 600px; }
-        .input-group input { font-family: 'Jua', sans-serif; font-size: 1.5rem; padding: 8px 15px; width: 140px; text-align: center; border: 3px solid #81c784; border-radius: 8px; outline: none; }
+        /* 시작 설정 화면 */
+        #setup-area { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 15px; z-index: 10; padding: 20px; width: 100%; max-height: 100%; overflow-y: auto; margin: auto 0; }
+        .input-group { background-color: #f1f8e9; padding: 15px 25px; border-radius: 12px; border: 3px solid #a5d6a7; display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 1.4rem; color: #2e7d32; width: 100%; max-width: 650px; flex-wrap: wrap; }
+        .input-group label { font-weight: bold; }
+        .input-group input[type="text"], .input-group input[type="number"] { font-family: 'Jua', sans-serif; font-size: 1.3rem; padding: 8px 15px; width: 140px; text-align: center; border: 3px solid #81c784; border-radius: 8px; outline: none; }
         .input-group input:focus { border-color: #2e7d32; }
-        .setup-btns { display: flex; gap: 15px; justify-content: center; margin-top: 10px; width: 100%; max-width: 600px; }
+        
+        /* 테마 선택 버튼 디자인 */
+        .theme-selector { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: 100%; }
+        .theme-btn { font-family: 'Jua', sans-serif; padding: 10px 20px; font-size: 1.3rem; border: 3px solid #bdbdbd; border-radius: 20px; background-color: #e0e0e0; color: #757575; cursor: pointer; transition: 0.2s; white-space: nowrap; box-shadow: none; opacity: 0.7; }
+        .theme-btn.active { background-color: #4caf50; color: #fff; border-color: #388e3c; box-shadow: 0 4px 0 #2e7d32; transform: translateY(-2px); opacity: 1; }
+        
+        /* 선택된 테마 텍스트 표시 영역 */
+        #selected-theme-display { font-size: 1.3rem; margin-top: 5px; font-weight: normal; padding: 5px 15px; border-radius: 10px; transition: 0.3s; }
+
+        .setup-btns { display: flex; gap: 15px; justify-content: center; margin-top: 5px; width: 100%; max-width: 650px; }
         .btn-blue { background-color: #1976d2; box-shadow: 0 5px 0 #0d47a1; }
         .btn-blue:hover { background-color: #1565c0; box-shadow: 0 3px 0 #0d47a1; }
         .btn-orange { background-color: #f57c00; box-shadow: 0 5px 0 #e65100; }
         .btn-orange:hover { background-color: #ef6c00; box-shadow: 0 3px 0 #e65100; }
         
+        /* 전체 문제 보기 모달 스타일 */
         #all-questions-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background-color: #e8f5e9; border-radius: 20px; width: 100%; max-width: 1200px; max-height: 90vh; padding: 35px; position: relative; display: flex; flex-direction: column; box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
+        .modal-content { background-color: #e8f5e9; border-radius: 20px; width: 100%; max-width: 1200px; max-height: 90vh; padding: 30px; position: relative; display: flex; flex-direction: column; box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
         .close-btn { position: absolute; top: 15px; right: 25px; font-size: 3.5rem; color: #2e7d32; cursor: pointer; line-height: 1; transition: 0.2s; }
         .close-btn:hover { color: #1b5e20; transform: scale(1.1); }
-        #questions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; overflow-y: auto; padding-right: 15px; margin-top: 20px; }
+        #questions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; overflow-y: auto; padding-right: 15px; margin-top: 15px; }
         .q-card { background: #fff; border: 3px solid #a5d6a7; border-radius: 12px; padding: 15px; text-align: center; display: flex; flex-direction: column; justify-content: flex-start; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .q-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; background-color: #f5f5f5; border: 1px solid #e0e0e0; }
         .q-card .ans-input { color: #d32f2f; font-weight: bold; font-size: 1.4rem; margin-bottom: 8px; text-align: center; border: 2px dashed #ef9a9a; border-radius: 6px; padding: 6px; width: 100%; font-family: 'Jua', sans-serif; transition: 0.2s; }
         .q-card .ans-input:focus { outline: none; border: 2px solid #d32f2f; background-color: #ffebee; }
         .q-card .img-url-input { font-size: 0.95rem; margin-bottom: 10px; text-align: center; border: 2px solid #c8e6c9; border-radius: 6px; padding: 6px; width: 100%; font-family: sans-serif; }
+        .q-card .category-badge { display: inline-block; background: #c8e6c9; color: #1b5e20; font-size: 0.9rem; padding: 3px 8px; border-radius: 5px; margin-bottom: 8px; align-self: center; }
         .upload-label { display: inline-block; background-color: #4caf50; color: white; padding: 10px 12px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; transition: 0.2s; margin-top: auto; box-shadow: 0 3px 0 #388e3c; }
         .upload-label:hover { background-color: #388e3c; transform: translateY(2px); box-shadow: 0 1px 0 #2e7d32; }
         .upload-label input[type="file"] { display: none; }
 
+        /* 점수 집계판 모달 스타일 */
         #scoreboard-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .score-list-container { max-height: 55vh; overflow-y: auto; margin-top: 30px; text-align: left; padding-right: 15px; }
         .score-item { display: flex; justify-content: space-between; font-size: 2rem; padding: 20px 15px; border-bottom: 3px dashed #a5d6a7; color: #1b5e20; align-items: center; gap: 10px; }
@@ -62,17 +80,19 @@
         .score-name { flex-grow: 1; text-align: center; padding: 0 10px; }
         .score-points { font-weight: bold; color: #d32f2f; font-size: 2.2rem; min-width: 90px; text-align: right; white-space: nowrap; }
 
+        /* 커스텀 모달 스타일 */
         #custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
-        .custom-modal { background: #fff; padding: 50px 30px; border-radius: 20px; text-align: center; border: 5px solid #a5d6a7; width: 100%; max-width: 450px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
-        #custom-modal-msg { font-size: 2rem; color: #2e7d32; margin-top: 0; margin-bottom: 40px; white-space: pre-wrap; line-height: 1.4; font-family: 'Jua', sans-serif; }
-        .custom-modal-btns { display: flex; gap: 20px; justify-content: center; }
-        .custom-modal-btns button { padding: 15px 30px; font-size: 1.5rem; border-radius: 10px; flex: 1; }
+        .custom-modal { background: #fff; padding: 40px 30px; border-radius: 20px; text-align: center; border: 5px solid #a5d6a7; width: 100%; max-width: 450px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
+        #custom-modal-msg { font-size: 1.8rem; color: #2e7d32; margin-top: 0; margin-bottom: 30px; white-space: pre-wrap; line-height: 1.4; font-family: 'Jua', sans-serif; }
+        .custom-modal-btns { display: flex; gap: 15px; justify-content: center; }
+        .custom-modal-btns button { padding: 12px 25px; font-size: 1.4rem; border-radius: 10px; flex: 1; }
         #custom-btn-cancel { background-color: #757575; box-shadow: 0 5px 0 #424242; }
         #custom-btn-cancel:hover { background-color: #616161; box-shadow: 0 3px 0 #424242; }
         #custom-btn-cancel:active { transform: translateY(4px); box-shadow: 0 1px 0 #424242; }
 
-        .controls { margin-top: 20px; display: flex; gap: 20px; width: 95%; max-width: 1000px; justify-content: center; }
-        button { font-family: 'Jua', sans-serif; padding: 20px 30px; font-size: 1.6rem; cursor: pointer; border: none; border-radius: 12px; color: white; background-color: #2e7d32; transition: 0.2s; box-shadow: 0 5px 0 #1b5e20; touch-action: manipulation; white-space: nowrap; }
+        /* 하단 조작 컨트롤 */
+        .controls { margin-top: 15px; display: flex; gap: 15px; width: 95%; max-width: 1000px; justify-content: center; }
+        button { font-family: 'Jua', sans-serif; padding: 15px 25px; font-size: 1.5rem; cursor: pointer; border: none; border-radius: 12px; color: white; background-color: #2e7d32; transition: 0.2s; box-shadow: 0 5px 0 #1b5e20; touch-action: manipulation; white-space: nowrap; }
         button:hover { background-color: #1b5e20; transform: translateY(2px); box-shadow: 0 3px 0 #1b5e20; }
         button:active { transform: translateY(5px); box-shadow: 0 0px 0 #1b5e20; }
         button:disabled { background-color: #a5d6a7; box-shadow: 0 5px 0 #81c784; cursor: not-allowed; opacity: 0.7; }
@@ -86,50 +106,52 @@
         ::-webkit-scrollbar-track { background: #e8f5e9; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #81c784; border-radius: 10px; border: 2px solid #e8f5e9; }
 
-        /* 📱 모바일 디바이스 최적화 */
         @media (max-width: 768px) {
-            .logo { height: 50px; margin-top: 5px; }
-            h1 { font-size: 2.3rem; margin-bottom: 5px; }
+            .logo { height: 45px; margin-top: 5px; }
+            h1 { font-size: 2.2rem; margin-bottom: 5px; }
             
             #info-bar { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 10px; margin-bottom: 10px; }
-            #stage-text { grid-column: 1 / 3; grid-row: 1; font-size: 1.5rem; margin-bottom: 0; }
-            #info-team { grid-column: 1; grid-row: 2; font-size: 1.3rem; padding: 8px 10px; max-width: none; }
-            #info-score { grid-column: 2; grid-row: 2; font-size: 1.3rem; padding: 8px 10px; text-align: center; }
+            #stage-text { grid-column: 1 / 3; grid-row: 1; font-size: 1.4rem; margin-bottom: 0; }
+            #info-team { grid-column: 1; grid-row: 2; font-size: 1.2rem; padding: 8px 10px; max-width: none; }
+            #info-score { grid-column: 2; grid-row: 2; font-size: 1.2rem; padding: 8px 10px; text-align: center; }
             
-            #image-container { height: 45vh; border-width: 4px; border-radius: 15px; align-items: flex-start; padding-bottom: 10px; }
-            #ox-overlay { font-size: 15rem; align-self: center; }
+            #image-container { height: 40vh; border-width: 4px; border-radius: 15px; align-items: flex-start; padding-bottom: 10px; }
+            #ox-overlay { font-size: 12rem; align-self: center; }
             
-            #timer-container { height: 20px; margin-top: 15px; }
-            #answer-text { font-size: 3.5rem; margin-top: 10px; height: 50px; }
+            #timer-container { height: 20px; margin-top: 10px; }
+            #answer-text { font-size: 3rem; margin-top: 5px; height: 45px; }
             
             #setup-area { padding: 15px 10px; gap: 12px; justify-content: flex-start; }
-            #setup-area h2 { font-size: 1.4rem; }
-            .input-group { flex-direction: column; padding: 15px; gap: 8px; font-size: 1.4rem; }
-            .input-group input { width: 100%; max-width: none; font-size: 1.4rem; }
+            .input-group { flex-direction: column; padding: 15px; gap: 10px; font-size: 1.3rem; }
+            .input-group input[type="text"], .input-group input[type="number"] { width: 100%; max-width: none; font-size: 1.3rem; }
             
+            .theme-selector { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 8px; }
+            .theme-btn { font-size: 1.2rem; padding: 8px 5px; width: 100%; }
+            #selected-theme-display { font-size: 1.1rem; padding: 5px 10px; }
+
             .setup-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
-            .setup-btns button { width: 100%; font-size: 1.15rem; padding: 12px 5px; line-height: 1.4; white-space: normal; }
+            .setup-btns button { width: 100%; font-size: 1.1rem; padding: 12px 5px; line-height: 1.4; white-space: normal; }
             
             .mobile-br { display: block; }
             .desktop-space { display: none; }
             
-            .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-            button { width: 100%; padding: 15px 10px; font-size: 1.4rem; white-space: normal; line-height: 1.3; }
-            #start-btn { grid-column: 1 / 3; padding: 18px 10px; font-size: 1.6rem; }
+            .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+            button { width: 100%; padding: 12px 10px; font-size: 1.3rem; white-space: normal; line-height: 1.3; }
+            #start-btn { grid-column: 1 / 3; padding: 15px 10px; font-size: 1.5rem; }
             
-            .modal-content { padding: 20px 15px; max-height: 90vh; }
+            .modal-content { padding: 15px; max-height: 90vh; }
             .close-btn { top: 10px; right: 15px; font-size: 2.5rem; }
-            #all-questions-modal h2, #scoreboard-modal h2 { font-size: 1.8rem; }
+            #all-questions-modal h2, #scoreboard-modal h2 { font-size: 1.6rem; }
             #questions-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
             .q-card { padding: 10px; }
-            .q-card img { height: 100px; }
-            .q-card .ans-input { font-size: 1.2rem; }
+            .q-card img { height: 90px; }
+            .q-card .ans-input { font-size: 1.1rem; }
             
-            .score-item { font-size: 1.5rem; padding: 15px 5px; }
-            .score-rank, .score-points { font-size: 1.6rem; min-width: 70px; }
+            .score-item { font-size: 1.3rem; padding: 15px 5px; }
+            .score-rank, .score-points { font-size: 1.4rem; min-width: 60px; }
             
-            #custom-modal-msg { font-size: 1.6rem; }
-            .custom-modal-btns button { font-size: 1.3rem; padding: 12px 15px; }
+            #custom-modal-msg { font-size: 1.4rem; }
+            .custom-modal-btns button { font-size: 1.2rem; padding: 10px 15px; }
         }
     </style>
 </head>
@@ -147,21 +169,36 @@
     <div id="image-container">
         <div id="ox-overlay"></div>
         <div id="setup-area">
-            <h2>아래 '시작' 버튼을 누르면 퀴즈가 시작됩니다!<br>(소리를 켜주세요 🔊)</h2>
-            <div class="input-group">
-                <label for="team-name">참가 팀 이름:</label>
+            
+            <div class="input-group" style="flex-direction: row; flex-wrap: wrap;">
+                <label for="team-name">참가 팀명:</label>
                 <input type="text" id="team-name" placeholder="입력 생략 가능">
             </div>
-            <div class="input-group">
-                <label for="question-count">진행할 문제 수:</label>
-                <div style="display: flex; align-items: center; gap: 10px; width: 100%; justify-content: center;">
-                    <input type="number" id="question-count" min="1" value="50">
-                    <span id="max-count-label"></span>
+
+            <div class="input-group" style="flex-direction: column; align-items: center; gap: 12px;">
+                <label>퀴즈 테마 선택 (클릭하여 켜기/끄기)</label>
+                <div class="theme-selector">
+                    <!-- 💡 기본적으로 active 클래스가 없으며(비활성화 상태), 선택해야 활성화됩니다 -->
+                    <button class="theme-btn" data-theme="동물" onclick="toggleTheme('동물', this)">🦁 동물</button>
+                    <button class="theme-btn" data-theme="식물" onclick="toggleTheme('식물', this)">🌿 식물</button>
+                    <button class="theme-btn" data-theme="나무" onclick="toggleTheme('나무', this)">🌲 나무</button>
+                    <button class="theme-btn" data-theme="캐릭터" onclick="toggleTheme('캐릭터', this)">🧚 캐릭터</button>
+                </div>
+                <!-- 실시간 선택 테마 표시 텍스트 -->
+                <div id="selected-theme-display"></div>
+            </div>
+
+            <div class="input-group" style="flex-direction: row; flex-wrap: wrap;">
+                <label for="question-count">진행 문제 수:</label>
+                <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
+                    <input type="number" id="question-count" min="1" value="0">
+                    <span id="max-count-label" style="font-weight: bold; color: #1b5e20;"></span>
                 </div>
             </div>
+
             <div class="setup-btns">
                 <button onclick="toggleScoreboard()" class="btn-blue">🏆 팀별 점수<span class="desktop-space"> </span><br class="mobile-br">집계판</button>
-                <button onclick="toggleAllQuestions()" class="btn-orange">👀 전체 문제<span class="desktop-space"> </span><br class="mobile-br">확인 및 수정</button>
+                <button onclick="toggleAllQuestions()" class="btn-orange">👀 선택 문제<span class="desktop-space"> </span><br class="mobile-br">확인 및 수정</button>
             </div>
         </div>
         <img id="quiz-image" src="" alt="퀴즈 이미지">
@@ -174,7 +211,7 @@
     <div id="answer-text">정답!</div>
 
     <div class="controls">
-        <button id="start-btn" onclick="startQuiz()">시작</button>
+        <button id="start-btn" onclick="startQuiz()">▶️ 퀴즈 시작하기</button>
         <button id="btn-o" onclick="markAnswer(true)" style="background-color: #1976d2; display: none;">정답 O</button>
         <button id="btn-x" onclick="markAnswer(false)" style="background-color: #e53935; display: none;">오답 X</button>
         <button id="answer-btn" onclick="showAnswer()" disabled style="display: none;">정답 보기</button>
@@ -197,8 +234,8 @@
     <div id="all-questions-modal">
         <div class="modal-content">
             <span class="close-btn" onclick="toggleAllQuestions()">&times;</span>
-            <h2 style="color: #2e7d32; margin-top: 0; border-bottom: 3px solid #a5d6a7; padding-bottom: 15px; margin-bottom: 10px; font-size: 2.2rem;">전체 문제 목록 (총 <span id="total-q-count">50</span>문제)</h2>
-            <p style="color: #d32f2f; font-size: 1.1rem; margin: 0 0 15px 0;">⚠️ 모달창에서 수정한 정답과 사진은 <b>새로고침 시 초기화</b>됩니다. 영구 반영하려면 깃허브 코드를 수정하세요.</p>
+            <h2 style="color: #2e7d32; margin-top: 0; border-bottom: 3px solid #a5d6a7; padding-bottom: 10px; margin-bottom: 10px; font-size: 2rem;">목록 (<span id="total-q-count">0</span>문제)</h2>
+            <p style="color: #d32f2f; font-size: 1.1rem; margin: 0 0 10px 0;">⚠️ 임시 수정 모드입니다. 영구 반영하려면 깃허브 저장소를 수정하세요.</p>
             <div id="questions-grid"></div>
         </div>
     </div>
@@ -212,60 +249,131 @@
     </div>
 
     <script>
-        // 💡 불필요했던 stage 데이터 속성을 제거하여 코드를 최적화했습니다.
         const quizData = [
-            { answer: "다람쥐", img: "./images/01.jpg" },
-            { answer: "청설모", img: "./images/02.jpg" },
-            { answer: "멧돼지", img: "./images/03.jpg" },
-            { answer: "고라니", img: "./images/04.jpg" },
-            { answer: "딱따구리", img: "./images/05.jpg" },
-            { answer: "부엉이", img: "./images/06.jpg" },
-            { answer: "개구리", img: "./images/07.jpg" }, 
-            { answer: "토끼", img: "./images/08.jpg" },     
-            { answer: "무당벌레", img: "./images/09.jpg" },
-            { answer: "장수풍뎅이", img: "./images/10.jpg" },
-            { answer: "사슴벌레", img: "./images/11.jpg" },
-            { answer: "나비", img: "./images/12.jpg" },
-            { answer: "매미", img: "./images/13.jpg" },
-            { answer: "지렁이", img: "./images/14.jpg" },
-            { answer: "소나무", img: "./images/15.jpg" },
-            { answer: "은행나무", img: "./images/16.jpg" },
-            { answer: "단풍나무", img: "./images/17.jpg" },
-            { answer: "도토리", img: "./images/18.jpg" },
-            { answer: "솔방울", img: "./images/19.jpg" },
-            { answer: "민들레", img: "./images/20.jpg" },
-            { answer: "편백나무", img: "./images/21.jpg" },
-            { answer: "자작나무", img: "./images/22.jpg" },
-            { answer: "참나무", img: "./images/23.jpg" },
-            { answer: "대나무", img: "./images/24.jpg" },
-            { answer: "고사리", img: "./images/25.jpg" },
-            { answer: "이끼", img: "./images/26.jpg" },
-            { answer: "독버섯", img: "./images/27.jpg" },
-            { answer: "표고버섯", img: "./images/28.jpg" },
-            { answer: "칡덩굴", img: "./images/29.jpg" },
-            { answer: "호랑나비", img: "./images/30.jpg" },
-            { answer: "물총새", img: "./images/31.jpg" },
-            { answer: "파리매", img: "./images/32.jpg" },
-            { answer: "하늘소", img: "./images/33.jpg" },
-            { answer: "타잔", img: "./images/34.jpg" },
-            { answer: "곰돌이 푸", img: "./images/35.jpg" },
-            { answer: "팅커벨", img: "./images/36.jpg" },
-            { answer: "피터팬", img: "./images/37.jpg" },
-            { answer: "이웃집 토토로", img: "./images/38.jpg" },
-            { answer: "스머프", img: "./images/39.jpg" },
-            { answer: "숲해설가", img: "./images/40.jpg" },
-            { answer: "등산객", img: "./images/41.jpg" },
-            { answer: "나무꾼", img: "./images/42.jpg" },
-            { answer: "식물학자", img: "./images/43.jpg" },
-            { answer: "파브르", img: "./images/44.jpg" },
-            { answer: "루페", img: "./images/45.jpg" },
-            { answer: "청진기", img: "./images/46.jpg" },
-            { answer: "등산화", img: "./images/47.jpg" },
-            { answer: "배낭", img: "./images/48.jpg" },
-            { answer: "나침반", img: "./images/49.jpg" },
-            { answer: "도감", img: "./images/50.jpg" }
+            { category: "동물", answer: "다람쥐", img: "./images/01.jpg" },
+            { category: "동물", answer: "청설모", img: "./images/02.jpg" },
+            { category: "동물", answer: "멧돼지", img: "./images/03.jpg" },
+            { category: "동물", answer: "고라니", img: "./images/04.jpg" },
+            { category: "동물", answer: "딱따구리", img: "./images/05.jpg" },
+            { category: "동물", answer: "부엉이", img: "./images/06.jpg" },
+            { category: "동물", answer: "개구리", img: "./images/07.jpg" },
+            { category: "동물", answer: "토끼", img: "./images/08.jpg" },
+            { category: "동물", answer: "무당벌레", img: "./images/09.jpg" },
+            { category: "동물", answer: "장수풍뎅이", img: "./images/10.jpg" },
+            { category: "동물", answer: "사슴벌레", img: "./images/11.jpg" },
+            { category: "동물", answer: "나비", img: "./images/12.jpg" },
+            { category: "동물", answer: "매미", img: "./images/13.jpg" },
+            { category: "동물", answer: "지렁이", img: "./images/14.jpg" },
+            { category: "동물", answer: "호랑나비", img: "./images/15.jpg" },
+            { category: "동물", answer: "물총새", img: "./images/16.jpg" },
+            { category: "동물", answer: "파리매", img: "./images/17.jpg" },
+            { category: "동물", answer: "하늘소", img: "./images/18.jpg" },
+            { category: "동물", answer: "사마귀", img: "./images/19.jpg" },
+            { category: "동물", answer: "방아깨비", img: "./images/20.jpg" },
+            { category: "동물", answer: "잠자리", img: "./images/21.jpg" },
+            { category: "동물", answer: "반딧불이", img: "./images/22.jpg" },
+            { category: "동물", answer: "달팽이", img: "./images/23.jpg" },
+            { category: "동물", answer: "두꺼비", img: "./images/24.jpg" },
+            { category: "동물", answer: "도롱뇽", img: "./images/25.jpg" },
+            { category: "동물", answer: "너구리", img: "./images/26.jpg" },
+            { category: "동물", answer: "오소리", img: "./images/27.jpg" },
+            { category: "동물", answer: "족제비", img: "./images/28.jpg" },
+            { category: "동물", answer: "까치", img: "./images/29.jpg" },
+            { category: "동물", answer: "참새", img: "./images/30.jpg" },
+            { category: "식물", answer: "민들레", img: "./images/31.jpg" },
+            { category: "식물", answer: "고사리", img: "./images/32.jpg" },
+            { category: "식물", answer: "이끼", img: "./images/33.jpg" },
+            { category: "식물", answer: "독버섯", img: "./images/34.jpg" },
+            { category: "식물", answer: "표고버섯", img: "./images/35.jpg" },
+            { category: "식물", answer: "칡덩굴", img: "./images/36.jpg" },
+            { category: "식물", answer: "제비꽃", img: "./images/37.jpg" },
+            { category: "식물", answer: "개망초", img: "./images/38.jpg" },
+            { category: "식물", answer: "토끼풀", img: "./images/39.jpg" },
+            { category: "식물", answer: "강아지풀", img: "./images/40.jpg" },
+            { category: "식물", answer: "쑥", img: "./images/41.jpg" },
+            { category: "식물", answer: "냉이", img: "./images/42.jpg" },
+            { category: "식물", answer: "엉겅퀴", img: "./images/43.jpg" },
+            { category: "식물", answer: "질경이", img: "./images/44.jpg" },
+            { category: "식물", answer: "구절초", img: "./images/45.jpg" },
+            { category: "식물", answer: "달맞이꽃", img: "./images/46.jpg" },
+            { category: "식물", answer: "억새", img: "./images/47.jpg" },
+            { category: "식물", answer: "갈대", img: "./images/48.jpg" },
+            { category: "식물", answer: "수국", img: "./images/49.jpg" },
+            { category: "식물", answer: "나리", img: "./images/50.jpg" },
+            { category: "식물", answer: "동백꽃", img: "./images/51.jpg" },
+            { category: "식물", answer: "무궁화", img: "./images/52.jpg" },
+            { category: "식물", answer: "진달래", img: "./images/53.jpg" },
+            { category: "식물", answer: "철쭉", img: "./images/54.jpg" },
+            { category: "식물", answer: "개나리", img: "./images/55.jpg" },
+            { category: "식물", answer: "해바라기", img: "./images/56.jpg" },
+            { category: "식물", answer: "코스모스", img: "./images/57.jpg" },
+            { category: "식물", answer: "튤립", img: "./images/58.jpg" },
+            { category: "식물", answer: "장미", img: "./images/59.jpg" },
+            { category: "식물", answer: "백합", img: "./images/60.jpg" },
+            { category: "나무", answer: "소나무", img: "./images/61.jpg" },
+            { category: "나무", answer: "은행나무", img: "./images/62.jpg" },
+            { category: "나무", answer: "단풍나무", img: "./images/63.jpg" },
+            { category: "나무", answer: "편백나무", img: "./images/64.jpg" },
+            { category: "나무", answer: "자작나무", img: "./images/65.jpg" },
+            { category: "나무", answer: "참나무", img: "./images/66.jpg" },
+            { category: "나무", answer: "대나무", img: "./images/67.jpg" },
+            { category: "나무", answer: "벚나무", img: "./images/68.jpg" },
+            { category: "나무", answer: "밤나무", img: "./images/69.jpg" },
+            { category: "나무", answer: "감나무", img: "./images/70.jpg" },
+            { category: "나무", answer: "사과나무", img: "./images/71.jpg" },
+            { category: "나무", answer: "배나무", img: "./images/72.jpg" },
+            { category: "나무", answer: "복숭아나무", img: "./images/73.jpg" },
+            { category: "나무", answer: "포도나무", img: "./images/74.jpg" },
+            { category: "나무", answer: "매화나무", img: "./images/75.jpg" },
+            { category: "나무", answer: "살구나무", img: "./images/76.jpg" },
+            { category: "나무", answer: "자두나무", img: "./images/77.jpg" },
+            { category: "나무", answer: "모과나무", img: "./images/78.jpg" },
+            { category: "나무", answer: "무화과나무", img: "./images/79.jpg" },
+            { category: "나무", answer: "석류나무", img: "./images/80.jpg" },
+            { category: "나무", answer: "호두나무", img: "./images/81.jpg" },
+            { category: "나무", answer: "향나무", img: "./images/82.jpg" },
+            { category: "나무", answer: "잣나무", img: "./images/83.jpg" },
+            { category: "나무", answer: "전나무", img: "./images/84.jpg" },
+            { category: "나무", answer: "구상나무", img: "./images/85.jpg" },
+            { category: "나무", answer: "자귀나무", img: "./images/86.jpg" },
+            { category: "나무", answer: "느티나무", img: "./images/87.jpg" },
+            { category: "나무", answer: "버드나무", img: "./images/88.jpg" },
+            { category: "나무", answer: "미루나무", img: "./images/89.jpg" },
+            { category: "나무", answer: "오동나무", img: "./images/90.jpg" },
+            { category: "캐릭터", answer: "타잔", img: "./images/91.jpg" },
+            { category: "캐릭터", answer: "곰돌이 푸", img: "./images/92.jpg" },
+            { category: "캐릭터", answer: "팅커벨", img: "./images/93.jpg" },
+            { category: "캐릭터", answer: "피터팬", img: "./images/94.jpg" },
+            { category: "캐릭터", answer: "이웃집 토토로", img: "./images/95.jpg" },
+            { category: "캐릭터", answer: "스머프", img: "./images/96.jpg" },
+            { category: "캐릭터", answer: "숲해설가", img: "./images/97.jpg" },
+            { category: "캐릭터", answer: "등산객", img: "./images/98.jpg" },
+            { category: "캐릭터", answer: "나무꾼", img: "./images/99.jpg" },
+            { category: "캐릭터", answer: "식물학자", img: "./images/100.jpg" },
+            { category: "캐릭터", answer: "파브르", img: "./images/101.jpg" },
+            { category: "캐릭터", answer: "백설공주", img: "./images/102.jpg" },
+            { category: "캐릭터", answer: "뽀로로", img: "./images/103.jpg" },
+            { category: "캐릭터", answer: "크롱", img: "./images/104.jpg" },
+            { category: "캐릭터", answer: "루피", img: "./images/105.jpg" },
+            { category: "캐릭터", answer: "에디", img: "./images/106.jpg" },
+            { category: "캐릭터", answer: "포비", img: "./images/107.jpg" },
+            { category: "캐릭터", answer: "해리", img: "./images/108.jpg" },
+            { category: "캐릭터", answer: "아기돼지 삼형제", img: "./images/109.jpg" },
+            { category: "캐릭터", answer: "빨간모자", img: "./images/110.jpg" },
+            { category: "캐릭터", answer: "심바", img: "./images/111.jpg" },
+            { category: "캐릭터", answer: "밤비", img: "./images/112.jpg" },
+            { category: "캐릭터", answer: "피카츄", img: "./images/113.jpg" },
+            { category: "캐릭터", answer: "꼬부기", img: "./images/114.jpg" },
+            { category: "캐릭터", answer: "파이리", img: "./images/115.jpg" },
+            { category: "캐릭터", answer: "이상해씨", img: "./images/116.jpg" },
+            { category: "캐릭터", answer: "도라에몽", img: "./images/117.jpg" },
+            { category: "캐릭터", answer: "마리오", img: "./images/118.jpg" },
+            { category: "캐릭터", answer: "루이지", img: "./images/119.jpg" },
+            { category: "캐릭터", answer: "짱구", img: "./images/120.jpg" }
         ];
 
+        // 💡 초기에는 아무 것도 선택되지 않은 빈 배열(0개 상태)로 시작합니다.
+        let selectedThemes = []; 
         let teamScores = []; 
         let selectedQuizData = []; 
         let currentIndex = -1;
@@ -305,29 +413,81 @@
         const scoreboardModal = document.getElementById('scoreboard-modal');
         const scoreList = document.getElementById('score-list');
 
-        questionCountInput.max = quizData.length;
-        questionCountInput.value = quizData.length; 
-        maxCountLabel.innerText = `/ 최대 ${quizData.length}문제`;
-        totalQCount.innerText = quizData.length;
+        // 💡 상태에 따라 색상과 텍스트를 바꿔주는 함수
+        function updateThemeDisplay() {
+            const displayEl = document.getElementById('selected-theme-display');
+            if (selectedThemes.length === 0) {
+                displayEl.innerText = "👉 퀴즈 테마를 먼저 선택해 주세요!";
+                displayEl.style.color = "#d32f2f";
+                displayEl.style.borderColor = "#ef9a9a";
+                displayEl.style.backgroundColor = "#ffebee";
+            } else if (selectedThemes.length === 4) {
+                displayEl.innerText = "🌟 전체 선택됨 (모둠 퀴즈)";
+                displayEl.style.color = "#e65100";
+                displayEl.style.borderColor = "#ffb74d";
+                displayEl.style.backgroundColor = "#fff3e0";
+            } else {
+                displayEl.innerText = "👉 현재 선택: " + selectedThemes.join(", ");
+                displayEl.style.color = "#e65100";
+                displayEl.style.borderColor = "#ffb74d";
+                displayEl.style.backgroundColor = "#fff3e0";
+            }
+        }
+
+        // 💡 0개일 때도 에러가 나지 않도록 방어 로직 추가
+        function updateMaxCount() {
+            const filteredData = quizData.filter(item => selectedThemes.includes(item.category));
+            const maxVal = filteredData.length;
+            
+            questionCountInput.max = maxVal > 0 ? maxVal : 1; 
+            
+            if (maxVal === 0) {
+                questionCountInput.value = 0;
+            } else if (parseInt(questionCountInput.value) > maxVal || parseInt(questionCountInput.value) === 0 || isNaN(parseInt(questionCountInput.value))) {
+                questionCountInput.value = maxVal > 20 ? 20 : maxVal; 
+            }
+            maxCountLabel.innerText = `/ 최대 ${maxVal}문제`;
+        }
+
+        function toggleTheme(themeName, btnElement) {
+            // 이제 해제할 때 최소 1개 제한이 없습니다. 전부 해제가 가능합니다.
+            if (selectedThemes.includes(themeName)) {
+                selectedThemes = selectedThemes.filter(t => t !== themeName);
+                btnElement.classList.remove('active');
+            } else {
+                selectedThemes.push(themeName);
+                btnElement.classList.add('active');
+            }
+            updateMaxCount();
+            updateThemeDisplay();
+        }
+
+        // 초기 구동 시 실행 (0개 상태로 세팅)
+        updateMaxCount(); 
+        updateThemeDisplay();
 
         function renderAllQuestions() {
             questionsGrid.innerHTML = "";
-            quizData.forEach((item, index) => {
+            const filteredData = quizData.filter(item => selectedThemes.includes(item.category));
+            totalQCount.innerText = filteredData.length;
+            
+            filteredData.forEach((item) => {
+                const originalIndex = quizData.indexOf(item);
                 const card = document.createElement('div');
                 card.className = 'q-card';
                 card.innerHTML = `
-                    <img id="preview-img-${index}" src="${item.img}" alt="문제 사진" onerror="this.src='https://via.placeholder.com/150?text=이미지+없음'">
-                    <input type="text" class="ans-input" value="${item.answer}" onchange="handleAnswerChange(event, ${index})" placeholder="정답 입력">
-                    <input type="text" id="img-url-${index}" class="img-url-input" value="${item.img}" onchange="handleImgUrlChange(event, ${index})" placeholder="사진 경로/URL">
+                    <div class="category-badge">${item.category}</div>
+                    <img id="preview-img-${originalIndex}" src="${item.img}" alt="문제 사진" onerror="this.src='https://via.placeholder.com/150?text=이미지+없음'">
+                    <input type="text" class="ans-input" value="${item.answer}" onchange="handleAnswerChange(event, ${originalIndex})" placeholder="정답 입력">
+                    <input type="text" id="img-url-${originalIndex}" class="img-url-input" value="${item.img}" onchange="handleImgUrlChange(event, ${originalIndex})" placeholder="사진 경로/URL">
                     <label class="upload-label">
-                        + PC 이미지 등록
-                        <input type="file" accept="image/*" onchange="handleImageUpload(event, ${index})">
+                        + 이미지 교체
+                        <input type="file" accept="image/*" onchange="handleImageUpload(event, ${originalIndex})">
                     </label>
                 `;
                 questionsGrid.appendChild(card);
             });
         }
-        renderAllQuestions(); 
 
         function handleAnswerChange(event, index) {
             quizData[index].answer = event.target.value;
@@ -381,6 +541,12 @@
             if (modal.style.display === "flex") {
                 modal.style.display = "none";
             } else {
+                // 💡 0개 선택 상태에서 문제 확인을 누를 경우의 방어 로직
+                if (selectedThemes.length === 0) {
+                     showCustomModal("테마를 먼저 선택해야 문제를 확인할 수 있습니다.", false, null, null);
+                     return;
+                }
+                renderAllQuestions(); 
                 modal.style.display = "flex";
             }
         }
@@ -465,17 +631,25 @@
         }
 
         function startQuiz() {
+            // 💡 0개 선택 시 퀴즈 시작 방지 로직
+            if (selectedThemes.length === 0) {
+                showCustomModal("최소 1개 이상의 퀴즈 테마를 선택해 주세요!", false, null, null);
+                return;
+            }
+
             currentTeamName = teamNameInput.value.trim() || "도전자";
             infoTeam.innerText = `팀: ${currentTeamName}`;
             
             score = 0;
             infoScore.innerText = `점수: 0`;
 
+            const filteredData = quizData.filter(item => selectedThemes.includes(item.category));
+
             let count = parseInt(questionCountInput.value, 10);
             if (isNaN(count) || count < 1) count = 1;
-            if (count > quizData.length) count = quizData.length;
+            if (count > filteredData.length) count = filteredData.length;
 
-            selectedQuizData = shuffleArray(quizData).slice(0, count);
+            selectedQuizData = shuffleArray(filteredData).slice(0, count);
 
             startBtn.style.display = 'none';
             setupArea.style.display = 'none'; 
