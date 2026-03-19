@@ -42,14 +42,10 @@
         .input-group input[type="text"], .input-group input[type="number"] { font-family: 'Jua', sans-serif; font-size: 1.3rem; padding: 8px 15px; width: 140px; text-align: center; border: 3px solid #81c784; border-radius: 8px; outline: none; }
         .input-group input:focus { border-color: #2e7d32; }
         
-        /* 테마 선택 버튼 디자인 (한 줄 가로 스크롤 적용) */
-        .theme-selector { display: flex; gap: 10px; flex-wrap: nowrap; justify-content: center; width: 100%; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
-        .theme-btn { font-family: 'Jua', sans-serif; padding: 10px 20px; font-size: 1.3rem; border: 3px solid #bdbdbd; border-radius: 20px; background-color: #e0e0e0; color: #757575; cursor: pointer; transition: 0.2s; white-space: nowrap; box-shadow: none; opacity: 0.7; flex: 0 0 auto; }
+        /* 💡 테마 선택 버튼 디자인 (가로 스크롤 제거, 화면에 맞게 조절) */
+        .theme-selector { display: flex; gap: 8px; flex-wrap: nowrap; justify-content: center; width: 100%; }
+        .theme-btn { font-family: 'Jua', sans-serif; padding: 10px 15px; font-size: 1.2rem; border: 3px solid #bdbdbd; border-radius: 20px; background-color: #e0e0e0; color: #757575; cursor: pointer; transition: 0.2s; white-space: nowrap; box-shadow: none; opacity: 0.7; flex: 1; text-align: center; }
         .theme-btn.active { background-color: #4caf50; color: #fff; border-color: #388e3c; box-shadow: 0 4px 0 #2e7d32; transform: translateY(-2px); opacity: 1; }
-        /* 테마 선택 영역 스크롤바 미관 처리 */
-        .theme-selector::-webkit-scrollbar { height: 6px; }
-        .theme-selector::-webkit-scrollbar-track { background: transparent; }
-        .theme-selector::-webkit-scrollbar-thumb { background: #c8e6c9; border-radius: 10px; }
         
         /* 선택된 테마 텍스트 표시 영역 */
         #selected-theme-display { font-size: 1.3rem; margin-top: 5px; font-weight: normal; padding: 5px 15px; border-radius: 10px; transition: 0.3s; }
@@ -130,18 +126,17 @@
             .input-group input[type="text"], .input-group input[type="number"] { width: 100%; max-width: none; font-size: 1.3rem; }
             
             /* 💡 모바일 가로 스크롤 제거 및 한 줄에 꽉 차게 맞춤 조절 */
-            .theme-selector { display: flex; flex-wrap: nowrap; justify-content: space-between; overflow-x: hidden; width: 100%; gap: 4px; padding-bottom: 0; }
+            .theme-selector { display: flex; flex-wrap: nowrap; justify-content: space-between; width: 100%; gap: 4px; }
             .theme-btn { font-size: 0.85rem; padding: 10px 0; width: 24%; flex: 1; letter-spacing: -0.5px; white-space: nowrap; word-break: keep-all; }
             #selected-theme-display { font-size: 1.1rem; padding: 5px 10px; }
 
             .setup-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
-            .setup-btns button { width: 100%; font-size: 1.1rem; padding: 12px 5px; line-height: 1.4; white-space: normal; }
-            
             .mobile-br { display: block; }
             .desktop-space { display: none; }
             
+            /* 💡 컨트롤 버튼 글씨가 안 짤리게 조절 */
             .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-            button { width: 100%; padding: 12px 10px; font-size: 1.3rem; white-space: normal; line-height: 1.3; }
+            button { width: 100%; padding: 12px 5px; font-size: 1.15rem; white-space: normal; line-height: 1.3; }
             #start-btn { grid-column: 1 / 3; padding: 15px 10px; font-size: 1.5rem; }
             
             .modal-content { padding: 15px; max-height: 90vh; }
@@ -213,12 +208,13 @@
 
     <div id="answer-text">정답!</div>
 
+    <!-- 💡 단축키 표시가 추가된 컨트롤 버튼 영역 -->
     <div class="controls">
         <button id="start-btn" onclick="startQuiz()">▶️ 퀴즈 시작하기</button>
-        <button id="btn-o" onclick="markAnswer(true)" style="background-color: #1976d2; display: none;">정답 O</button>
-        <button id="btn-x" onclick="markAnswer(false)" style="background-color: #e53935; display: none;">오답 X</button>
-        <button id="answer-btn" onclick="showAnswer()" disabled style="display: none;">정답 보기</button>
-        <button id="btn-stop" onclick="stopQuiz()" style="background-color: #616161; display: none;">그만하기</button>
+        <button id="btn-o" onclick="markAnswer(true)" style="background-color: #1976d2; display: none;">정답 O (←)</button>
+        <button id="btn-x" onclick="markAnswer(false)" style="background-color: #e53935; display: none;">오답 X (→)</button>
+        <button id="answer-btn" onclick="showAnswer()" disabled style="display: none;">정답 보기 (Space)</button>
+        <button id="btn-stop" onclick="stopQuiz()" style="background-color: #616161; display: none;">그만하기 (ESC)</button>
     </div>
 
     <audio id="snd-tick" src="ticking.mp3" preload="auto"></audio>
