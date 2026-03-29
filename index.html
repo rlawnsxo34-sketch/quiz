@@ -1,9 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>생태 스피드 퀴즈!</title>
+    <title>생태 스피드 퀴즈! (사운드 포함)</title>
     <!-- 구글 폰트 적용 (동글동글한 Jua 글씨체) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -126,11 +127,13 @@
             .input-group input[type="text"], .input-group input[type="number"] { width: 100%; max-width: none; font-size: 1.3rem; }
             
             /* 💡 모바일 가로 스크롤 제거 및 한 줄에 꽉 차게 맞춤 조절 */
-            .theme-selector { display: flex; flex-wrap: nowrap; justify-content: space-between; width: 100%; gap: 4px; }
+            .theme-selector { display: flex; flex-wrap: nowrap; justify-content: space-between; overflow-x: hidden; width: 100%; gap: 4px; padding-bottom: 0; }
             .theme-btn { font-size: 0.85rem; padding: 10px 0; width: 24%; flex: 1; letter-spacing: -0.5px; white-space: nowrap; word-break: keep-all; }
             #selected-theme-display { font-size: 1.1rem; padding: 5px 10px; }
 
             .setup-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+            .setup-btns button { width: 100%; font-size: 1.1rem; padding: 12px 5px; line-height: 1.4; white-space: normal; }
+            
             .mobile-br { display: block; }
             .desktop-space { display: none; }
             
@@ -172,7 +175,7 @@
             
             <div class="input-group" style="flex-direction: row; flex-wrap: wrap;">
                 <label for="team-name">참가 팀명:</label>
-                <input type="text" id="team-name" placeholder="생략 가능">
+                <input type="text" id="team-name" placeholder="입력 생략 가능">
             </div>
 
             <div class="input-group" style="flex-direction: column; align-items: center; gap: 12px;">
@@ -217,8 +220,11 @@
         <button id="btn-stop" onclick="stopQuiz()" style="background-color: #616161; display: none;">그만하기 (ESC)</button>
     </div>
 
-    <audio id="snd-tick" src="ticking.mp3" preload="auto"></audio>
-    <audio id="snd-ding" src="ding.mp3" preload="auto"></audio>
+    <!-- 💡 wav 확장자로 변경된 오디오 소스 -->
+    <audio id="snd-tick" src="ticking.wav" preload="auto"></audio>
+    <audio id="snd-ding" src="ding.wav" preload="auto"></audio>
+    <!-- 💡 새롭게 추가된 오답 효과음 소스 -->
+    <audio id="snd-wrong" src="wrong.wav" preload="auto"></audio>
 
     <div id="custom-modal-overlay">
         <div class="custom-modal">
@@ -342,13 +348,13 @@
             { category: "캐릭터", answer: "타잔", img: "91.jpg" },
             { category: "캐릭터", answer: "곰돌이 푸", img: "92.jpg" },
             { category: "캐릭터", answer: "팅커벨", img: "93.jpg" },
-            { category: "캐릭터", answer: "포이", img: "94.png" },
+            { category: "캐릭터", answer: "뽀로로", img: "94.jpg" },
             { category: "캐릭터", answer: "이웃집 토토로", img: "95.jpg" },
             { category: "캐릭터", answer: "스머프", img: "96.jpg" },
             { category: "캐릭터", answer: "백설공주", img: "97.jpg" },
             { category: "캐릭터", answer: "슈퍼마리오", img: "98.jpg" },
             { category: "캐릭터", answer: "피카츄", img: "99.jpg" },
-            { category: "캐릭터", answer: "마리", img: "100.png" }
+            { category: "캐릭터", answer: "도라에몽", img: "100.jpg" }
         ];
 
         let selectedThemes = []; 
@@ -583,6 +589,7 @@
 
         const sndTick = document.getElementById('snd-tick');
         const sndDing = document.getElementById('snd-ding');
+        const sndWrong = document.getElementById('snd-wrong'); // 💡 새롭게 추가된 오답 사운드 엘리먼트
 
         function shuffleArray(array) {
             const shuffled = [...array];
@@ -710,6 +717,7 @@
                 oxOverlay.innerText = "O";
                 oxOverlay.className = "ox-o";
             } else {
+                playSound(sndWrong); // 💡 오답일 경우 새로 추가한 오답 효과음 재생
                 oxOverlay.innerText = "X";
                 oxOverlay.className = "ox-x";
             }
@@ -800,3 +808,6 @@
     </script>
 </body>
 </html>
+
+
+```
