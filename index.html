@@ -14,15 +14,15 @@
         
         body { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #e8f5e9; font-family: 'Jua', sans-serif; overflow: hidden; user-select: none; }
         
-        /* 💡 상단 로고 및 제목 여백을 줄여 사진 영역 확보 */
+        /* 상단 로고 및 제목 여백을 줄여 사진 영역 확보 */
         .logo { height: 50px; margin-top: 5px; margin-bottom: 5px; object-fit: contain; }
         h1 { color: #2e7d32; margin-top: 0; margin-bottom: 10px; font-size: 3rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); text-align: center; line-height: 1.1; }
         
-        /* 💡 사진 영역을 화면에 꽉 차게 (max-width: 1400px, height: 65vh로 대폭 확대) */
+        /* 사진 영역을 화면에 꽉 차게 (max-width: 1400px, height: 60vh로 대폭 확대) */
         #image-container { width: 96vw; max-width: 1400px; height: 60vh; background-color: white; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; border: 6px solid #fff; }
         #quiz-image { max-width: 100%; max-height: 100%; object-fit: contain; display: none; margin: auto; }
         
-        /* 💡 타이머, 상태바, 컨트롤 버튼도 넓은 화면에 맞춰 확장 */
+        /* 타이머, 상태바, 컨트롤 버튼도 넓은 화면에 맞춰 확장 */
         #timer-container { width: 96vw; max-width: 1400px; height: 30px; background-color: #c8e6c9; margin-top: 15px; border-radius: 15px; overflow: hidden; border: 3px solid #a5d6a7; }
         #timer-bar { width: 100%; height: 100%; background-color: #4caf50; transition: width 0.1s linear, background-color 0.5s; }
         
@@ -171,7 +171,7 @@
         <div id="info-score">점수: 0</div>
     </div>
     
-    <!-- 💡 화면에 꽉 차도록 확장된 이미지 컨테이너 -->
+    <!-- 화면에 꽉 차도록 확장된 이미지 컨테이너 -->
     <div id="image-container">
         <div id="ox-overlay"></div>
         <div id="setup-area">
@@ -214,7 +214,7 @@
 
     <div id="answer-text">정답!</div>
 
-    <!-- 💡 단축키 표시가 명확하게 반영된 컨트롤 영역 -->
+    <!-- 단축키 표시가 명확하게 반영된 컨트롤 영역 -->
     <div class="controls">
         <button id="start-btn" onclick="startQuiz()">▶️ 퀴즈 시작하기</button>
         <button id="btn-o" onclick="markAnswer(true)" style="background-color: #1976d2; display: none;">정답 O (←)</button>
@@ -256,108 +256,143 @@
     </div>
 
     <script>
-        // 문법 오류(SyntaxError)를 방지하기 위해 배열 데이터 포맷을 정밀하게 교정했습니다.
+        // 💡 확장자(.jpg, .png)를 적지 않고 파일 이름만 적어도 자동으로 이미지를 불러옵니다.
+        // 💡 새로운 문제는 A, B, C 포맷으로 30문항(101~130번) 추가되었습니다.
         const quizData = [
-            { category: "동물(곤충)", answer: "다람쥐", img: "01.jpg" },
-            { category: "동물(곤충)", answer: "청설모", img: "02.jpg" },
-            { category: "동물(곤충)", answer: "멧돼지", img: "03.jpg" },
-            { category: "동물(곤충)", answer: "고라니", img: "04.jpg" },
-            { category: "동물(곤충)", answer: "딱따구리", img: "05.jpg" },
-            { category: "동물(곤충)", answer: "부엉이", img: "06.jpg" },
-            { category: "동물(곤충)", answer: "개구리", img: "07.jpg" },
-            { category: "동물(곤충)", answer: "토끼", img: "08.jpg" },
-            { category: "동물(곤충)", answer: "무당벌레", img: "09.jpg" },
-            { category: "동물(곤충)", answer: "장수풍뎅이", img: "10.jpg" },
-            { category: "동물(곤충)", answer: "사슴벌레", img: "11.jpg" },
-            { category: "동물(곤충)", answer: "나비", img: "12.jpg" },
-            { category: "동물(곤충)", answer: "매미", img: "13.jpg" },
-            { category: "동물(곤충)", answer: "거북이", img: "14.jpg" },
-            { category: "동물(곤충)", answer: "북극곰", img: "15.jpg" },
-            { category: "동물(곤충)", answer: "코뿔소", img: "16.jpg" },
-            { category: "동물(곤충)", answer: "꿀벌", img: "17.jpg" },
-            { category: "동물(곤충)", answer: "사슴", img: "18.jpg" },
-            { category: "동물(곤충)", answer: "사마귀", img: "19.jpg" },
-            { category: "동물(곤충)", answer: "메뚜기", img: "20.jpg" },
-            { category: "동물(곤충)", answer: "잠자리", img: "21.jpg" },
-            { category: "동물(곤충)", answer: "진돗개", img: "22.jpg" },
-            { category: "동물(곤충)", answer: "달팽이", img: "23.jpg" },
-            { category: "동물(곤충)", answer: "두꺼비", img: "24.jpg" },
-            { category: "동물(곤충)", answer: "도롱뇽", img: "25.jpg" },
-            { category: "동물(곤충)", answer: "너구리", img: "26.jpg" },
-            { category: "동물(곤충)", answer: "오소리", img: "27.jpg" },
-            { category: "동물(곤충)", answer: "족제비", img: "28.jpg" },
-            { category: "동물(곤충)", answer: "까치", img: "29.jpg" },
-            { category: "동물(곤충)", answer: "참새", img: "30.jpg" },
-            { category: "식물(꽃)", answer: "민들레", img: "31.jpg" },
-            { category: "식물(꽃)", answer: "고사리", img: "32.jpg" },
-            { category: "식물(꽃)", answer: "이끼", img: "33.jpg" },
-            { category: "식물(꽃)", answer: "천남성", img: "34.jpg" },
-            { category: "식물(꽃)", answer: "표고버섯", img: "35.jpg" },
-            { category: "식물(꽃)", answer: "양귀비", img: "36.jpg" },
-            { category: "식물(꽃)", answer: "제비꽃", img: "37.jpg" },
-            { category: "식물(꽃)", answer: "개망초", img: "38.jpg" },
-            { category: "식물(꽃)", answer: "토끼풀", img: "39.jpg" },
-            { category: "식물(꽃)", answer: "강아지풀", img: "40.jpg" },
-            { category: "식물(꽃)", answer: "쑥", img: "41.jpg" },
-            { category: "식물(꽃)", answer: "냉이", img: "42.jpg" },
-            { category: "식물(꽃)", answer: "엉겅퀴", img: "43.jpg" },
-            { category: "식물(꽃)", answer: "데이지", img: "44.jpg" },
-            { category: "식물(꽃)", answer: "붓꽃(아이리스)", img: "45.jpg" },
-            { category: "식물(꽃)", answer: "달맞이꽃", img: "46.jpg" },
-            { category: "식물(꽃)", answer: "억새", img: "47.jpg" },
-            { category: "식물(꽃)", answer: "갈대", img: "48.jpg" },
-            { category: "식물(꽃)", answer: "수국", img: "49.jpg" },
-            { category: "식물(꽃)", answer: "나리", img: "50.jpg" },
-            { category: "식물(꽃)", answer: "동백꽃", img: "51.jpg" },
-            { category: "식물(꽃)", answer: "무궁화", img: "52.jpg" },
-            { category: "식물(꽃)", answer: "진달래", img: "53.jpg" },
-            { category: "식물(꽃)", answer: "철쭉", img: "54.jpg" },
-            { category: "식물(꽃)", answer: "개나리", img: "55.jpg" },
-            { category: "식물(꽃)", answer: "해바라기", img: "56.jpg" },
-            { category: "식물(꽃)", answer: "코스모스", img: "57.jpg" },
-            { category: "식물(꽃)", answer: "튤립", img: "58.jpg" },
-            { category: "식물(꽃)", answer: "장미", img: "59.jpg" },
-            { category: "식물(꽃)", answer: "백합", img: "60.jpg" },
-            { category: "나무(과일)", answer: "소나무", img: "61.jpg" },
-            { category: "나무(과일)", answer: "은행나무", img: "62.jpg" },
-            { category: "나무(과일)", answer: "단풍나무", img: "63.jpg" },
-            { category: "나무(과일)", answer: "편백나무", img: "64.jpg" },
-            { category: "나무(과일)", answer: "자작나무", img: "65.jpg" },
-            { category: "나무(과일)", answer: "참나무", img: "66.jpg" },
-            { category: "나무(과일)", answer: "대나무", img: "67.jpg" },
-            { category: "나무(과일)", answer: "벚나무", img: "68.jpg" },
-            { category: "나무(과일)", answer: "밤송이", img: "69.jpg" },
-            { category: "나무(과일)", answer: "감나무", img: "70.jpg" },
-            { category: "나무(과일)", answer: "사과나무", img: "71.jpg" },
-            { category: "나무(과일)", answer: "배나무", img: "72.jpg" },
-            { category: "나무(과일)", answer: "복숭아", img: "73.jpg" },
-            { category: "나무(과일)", answer: "포도나무", img: "74.jpg" },
-            { category: "나무(과일)", answer: "매화나무", img: "75.jpg" },
-            { category: "나무(과일)", answer: "살구나무", img: "76.jpg" },
-            { category: "나무(과일)", answer: "자두", img: "77.jpg" },
-            { category: "나무(과일)", answer: "모과", img: "78.jpg" },
-            { category: "나무(과일)", answer: "무화과", img: "79.jpg" },
-            { category: "나무(과일)", answer: "석류", img: "80.jpg" },
-            { category: "나무(과일)", answer: "호두", img: "81.jpg" },
-            { category: "나무(과일)", answer: "떡갈나무", img: "82.jpg" },
-            { category: "나무(과일)", answer: "잣나무", img: "83.jpg" },
-            { category: "나무(과일)", answer: "전나무", img: "84.jpg" },
-            { category: "나무(과일)", answer: "구상나무", img: "85.jpg" },
-            { category: "나무(과일)", answer: "자귀나무", img: "86.jpg" },
-            { category: "나무(과일)", answer: "느티나무", img: "87.jpg" },
-            { category: "나무(과일)", answer: "버드나무", img: "88.jpg" },
-            { category: "나무(과일)", answer: "호랑가시나무", img: "89.jpg" },
-            { category: "나무(과일)", answer: "오동나무", img: "90.jpg" },
-            { category: "캐릭터", answer: "타잔", img: "91.jpg" },
-            { category: "캐릭터", answer: "곰돌이 푸", img: "92.jpg" },
-            { category: "캐릭터", answer: "팅커벨", img: "93.jpg" },
-            { category: "캐릭터", answer: "포이", img: "94.png" },
-            { category: "캐릭터", answer: "이웃집 토토로", img: "95.jpg" },
-            { category: "캐릭터", answer: "스머프", img: "96.jpg" },
-            { category: "캐릭터", answer: "백설공주", img: "97.jpg" },
-            { category: "캐릭터", answer: "슈퍼마리오", img: "98.jpg" },
-            { category: "캐릭터", answer: "피카츄", img: "99.jpg" },
-            { category: "캐릭터", answer: "마리", img: "100.png" }
+            { category: "동물(곤충)", answer: "다람쥐", img: "01" },
+            { category: "동물(곤충)", answer: "청설모", img: "02" },
+            { category: "동물(곤충)", answer: "멧돼지", img: "03" },
+            { category: "동물(곤충)", answer: "고라니", img: "04" },
+            { category: "동물(곤충)", answer: "딱따구리", img: "05" },
+            { category: "동물(곤충)", answer: "부엉이", img: "06" },
+            { category: "동물(곤충)", answer: "개구리", img: "07" },
+            { category: "동물(곤충)", answer: "토끼", img: "08" },
+            { category: "동물(곤충)", answer: "무당벌레", img: "09" },
+            { category: "동물(곤충)", answer: "장수풍뎅이", img: "10" },
+            { category: "동물(곤충)", answer: "사슴벌레", img: "11" },
+            { category: "동물(곤충)", answer: "나비", img: "12" },
+            { category: "동물(곤충)", answer: "매미", img: "13" },
+            { category: "동물(곤충)", answer: "거북이", img: "14" },
+            { category: "동물(곤충)", answer: "북극곰", img: "15" },
+            { category: "동물(곤충)", answer: "코뿔소", img: "16" },
+            { category: "동물(곤충)", answer: "꿀벌", img: "17" },
+            { category: "동물(곤충)", answer: "사슴", img: "18" },
+            { category: "동물(곤충)", answer: "사마귀", img: "19" },
+            { category: "동물(곤충)", answer: "메뚜기", img: "20" },
+            { category: "동물(곤충)", answer: "잠자리", img: "21" },
+            { category: "동물(곤충)", answer: "진돗개", img: "22" },
+            { category: "동물(곤충)", answer: "달팽이", img: "23" },
+            { category: "동물(곤충)", answer: "두꺼비", img: "24" },
+            { category: "동물(곤충)", answer: "도롱뇽", img: "25" },
+            { category: "동물(곤충)", answer: "너구리", img: "26" },
+            { category: "동물(곤충)", answer: "오소리", img: "27" },
+            { category: "동물(곤충)", answer: "족제비", img: "28" },
+            { category: "동물(곤충)", answer: "까치", img: "29" },
+            { category: "동물(곤충)", answer: "참새", img: "30" },
+            { category: "식물(꽃)", answer: "민들레", img: "31" },
+            { category: "식물(꽃)", answer: "고사리", img: "32" },
+            { category: "식물(꽃)", answer: "이끼", img: "33" },
+            { category: "식물(꽃)", answer: "천남성", img: "34" },
+            { category: "식물(꽃)", answer: "표고버섯", img: "35" },
+            { category: "식물(꽃)", answer: "양귀비", img: "36" },
+            { category: "식물(꽃)", answer: "제비꽃", img: "37" },
+            { category: "식물(꽃)", answer: "개망초", img: "38" },
+            { category: "식물(꽃)", answer: "토끼풀", img: "39" },
+            { category: "식물(꽃)", answer: "강아지풀", img: "40" },
+            { category: "식물(꽃)", answer: "쑥", img: "41" },
+            { category: "식물(꽃)", answer: "냉이", img: "42" },
+            { category: "식물(꽃)", answer: "엉겅퀴", img: "43" },
+            { category: "식물(꽃)", answer: "데이지", img: "44" },
+            { category: "식물(꽃)", answer: "붓꽃(아이리스)", img: "45" },
+            { category: "식물(꽃)", answer: "달맞이꽃", img: "46" },
+            { category: "식물(꽃)", answer: "억새", img: "47" },
+            { category: "식물(꽃)", answer: "갈대", img: "48" },
+            { category: "식물(꽃)", answer: "수국", img: "49" },
+            { category: "식물(꽃)", answer: "나리", img: "50" },
+            { category: "식물(꽃)", answer: "동백꽃", img: "51" },
+            { category: "식물(꽃)", answer: "무궁화", img: "52" },
+            { category: "식물(꽃)", answer: "진달래", img: "53" },
+            { category: "식물(꽃)", answer: "철쭉", img: "54" },
+            { category: "식물(꽃)", answer: "개나리", img: "55" },
+            { category: "식물(꽃)", answer: "해바라기", img: "56" },
+            { category: "식물(꽃)", answer: "코스모스", img: "57" },
+            { category: "식물(꽃)", answer: "튤립", img: "58" },
+            { category: "식물(꽃)", answer: "장미", img: "59" },
+            { category: "식물(꽃)", answer: "백합", img: "60" },
+            { category: "나무(과일)", answer: "소나무", img: "61" },
+            { category: "나무(과일)", answer: "은행나무", img: "62" },
+            { category: "나무(과일)", answer: "단풍나무", img: "63" },
+            { category: "나무(과일)", answer: "편백나무", img: "64" },
+            { category: "나무(과일)", answer: "자작나무", img: "65" },
+            { category: "나무(과일)", answer: "참나무", img: "66" },
+            { category: "나무(과일)", answer: "대나무", img: "67" },
+            { category: "나무(과일)", answer: "벚나무", img: "68" },
+            { category: "나무(과일)", answer: "밤송이", img: "69" },
+            { category: "나무(과일)", answer: "감나무", img: "70" },
+            { category: "나무(과일)", answer: "사과나무", img: "71" },
+            { category: "나무(과일)", answer: "배나무", img: "72" },
+            { category: "나무(과일)", answer: "복숭아", img: "73" },
+            { category: "나무(과일)", answer: "포도나무", img: "74" },
+            { category: "나무(과일)", answer: "매화나무", img: "75" },
+            { category: "나무(과일)", answer: "살구나무", img: "76" },
+            { category: "나무(과일)", answer: "자두", img: "77" },
+            { category: "나무(과일)", answer: "모과", img: "78" },
+            { category: "나무(과일)", answer: "무화과", img: "79" },
+            { category: "나무(과일)", answer: "석류", img: "80" },
+            { category: "나무(과일)", answer: "호두", img: "81" },
+            { category: "나무(과일)", answer: "떡갈나무", img: "82" },
+            { category: "나무(과일)", answer: "잣나무", img: "83" },
+            { category: "나무(과일)", answer: "전나무", img: "84" },
+            { category: "나무(과일)", answer: "구상나무", img: "85" },
+            { category: "나무(과일)", answer: "자귀나무", img: "86" },
+            { category: "나무(과일)", answer: "느티나무", img: "87" },
+            { category: "나무(과일)", answer: "버드나무", img: "88" },
+            { category: "나무(과일)", answer: "호랑가시나무", img: "89" },
+            { category: "나무(과일)", answer: "오동나무", img: "90" },
+            { category: "캐릭터", answer: "타잔", img: "91" },
+            { category: "캐릭터", answer: "곰돌이 푸", img: "92" },
+            { category: "캐릭터", answer: "팅커벨", img: "93" },
+            { category: "캐릭터", answer: "포이", img: "94" },
+            { category: "캐릭터", answer: "이웃집 토토로", img: "95" },
+            { category: "캐릭터", answer: "스머프", img: "96" },
+            { category: "캐릭터", answer: "백설공주", img: "97" },
+            { category: "캐릭터", answer: "슈퍼마리오", img: "98" },
+            { category: "캐릭터", answer: "피카츄", img: "99" },
+            { category: "캐릭터", answer: "마리", img: "100" },
+
+            // 💡 새롭게 추가된 테마별 10문항 (고유번호 A, B, C 포맷 사용)
+            { category: "동물(곤충)", answer: "사자", img: "A01" },
+            { category: "동물(곤충)", answer: "호랑이", img: "A02" },
+            { category: "동물(곤충)", answer: "코끼리", img: "A03" },
+            { category: "동물(곤충)", answer: "기린", img: "A04" },
+            { category: "동물(곤충)", answer: "원숭이", img: "A05" },
+            { category: "동물(곤충)", answer: "얼룩말", img: "A06" },
+            { category: "동물(곤충)", answer: "수달", img: "A07" },
+            { category: "동물(곤충)", answer: "뱀", img: "A08" },
+            { category: "동물(곤충)", answer: "독수리", img: "A09" },
+            { category: "동물(곤충)", answer: "올빼미", img: "A10" },
+
+            { category: "식물(꽃)", answer: "선인장", img: "B01" },
+            { category: "식물(꽃)", answer: "파리지옥", img: "B02" },
+            { category: "식물(꽃)", answer: "연꽃", img: "B03" },
+            { category: "식물(꽃)", answer: "안개꽃", img: "B04" },
+            { category: "식물(꽃)", answer: "나팔꽃", img: "B05" },
+            { category: "식물(꽃)", answer: "카네이션", img: "B06" },
+            { category: "식물(꽃)", answer: "채송화", img: "B07" },
+            { category: "식물(꽃)", answer: "프리지아", img: "B08" },
+            { category: "식물(꽃)", answer: "수련", img: "B09" },
+            { category: "식물(꽃)", answer: "모란", img: "B10" },
+
+            { category: "나무(과일)", answer: "바오밥나무", img: "C01" },
+            { category: "나무(과일)", answer: "야자수", img: "C02" },
+            { category: "나무(과일)", answer: "산수유나무", img: "C03" },
+            { category: "나무(과일)", answer: "계수나무", img: "C04" },
+            { category: "나무(과일)", answer: "삼나무", img: "C05" },
+            { category: "나무(과일)", answer: "주목", img: "C06" },
+            { category: "나무(과일)", answer: "아카시아나무", img: "C07" },
+            { category: "나무(과일)", answer: "라일락나무", img: "C08" },
+            { category: "나무(과일)", answer: "비자나무", img: "C09" },
+            { category: "나무(과일)", answer: "자몽나무", img: "C10" }
         ];
 
         let selectedThemes = []; 
@@ -458,11 +493,19 @@
                 const originalIndex = quizData.indexOf(item);
                 const card = document.createElement('div');
                 card.className = 'q-card';
+                
+                // 💡 확장자를 자동으로 인식 및 교체하는 안전한 폴백 로직 적용
+                const hasExt = item.img.startsWith('blob:') || item.img.startsWith('http') || item.img.includes('.');
+                const imgSrc = hasExt ? item.img : item.img + ".jpg";
+                const onErr = hasExt 
+                    ? "this.src='https://via.placeholder.com/150?text=이미지+없음'"
+                    : `if(this.src.includes('.jpg')) this.src='${item.img}.png'; else this.src='https://via.placeholder.com/150?text=이미지+없음';`;
+
                 card.innerHTML = `
                     <div class="category-badge">${item.category}</div>
-                    <img id="preview-img-${originalIndex}" src="${item.img}" alt="문제 사진" onerror="this.src='https://via.placeholder.com/150?text=이미지+없음'">
+                    <img id="preview-img-${originalIndex}" src="${imgSrc}" alt="문제 사진" onerror="${onErr}">
                     <input type="text" class="ans-input" value="${item.answer}" onchange="handleAnswerChange(event, ${originalIndex})" placeholder="정답 입력">
-                    <input type="text" id="img-url-${originalIndex}" class="img-url-input" value="${item.img}" onchange="handleImgUrlChange(event, ${originalIndex})" placeholder="사진 경로/URL">
+                    <input type="text" id="img-url-${originalIndex}" class="img-url-input" value="${item.img}" onchange="handleImgUrlChange(event, ${originalIndex})" placeholder="사진 이름/URL">
                     <label class="upload-label">
                         + 이미지 교체
                         <input type="file" accept="image/*" onchange="handleImageUpload(event, ${originalIndex})">
@@ -479,7 +522,18 @@
         function handleImgUrlChange(event, index) {
             const newUrl = event.target.value;
             quizData[index].img = newUrl;
-            document.getElementById(`preview-img-${index}`).src = newUrl;
+            const previewImg = document.getElementById(`preview-img-${index}`);
+            
+            const hasExt = newUrl.startsWith('blob:') || newUrl.startsWith('http') || newUrl.includes('.');
+            
+            previewImg.onerror = function() {
+                if (!hasExt && this.src.includes('.jpg')) {
+                    this.src = newUrl + '.png';
+                } else {
+                    this.src = 'https://via.placeholder.com/150?text=이미지+없음';
+                }
+            };
+            previewImg.src = hasExt ? newUrl : newUrl + ".jpg";
         }
 
         function handleImageUpload(event, index) {
@@ -663,24 +717,30 @@
             stageText.style.display = 'block';
             stageText.innerText = `문제 ${currentIndex + 1} / ${selectedQuizData.length}`;
 
+            let baseImg = selectedQuizData[currentIndex].img;
+            let hasExt = baseImg.startsWith('blob:') || baseImg.startsWith('http') || baseImg.includes('.');
+            
+            // 💡 메인 퀴즈 이미지 로딩 에러 시 자동 PNG 전환 로직
+            imgElement.onerror = function() {
+                if (!hasExt && this.src.includes('.jpg')) {
+                    this.src = baseImg + ".png"; // JPG 실패 시 PNG로 재시도
+                    return; 
+                }
+                startTimer(LIMIT_SEC); // 둘 다 실패 시 무한 멈춤 방지를 위해 강제 타이머 시작
+            };
+            
+            imgElement.onload = function() {
+                startTimer(LIMIT_SEC);
+            };
+
             imgElement.style.display = 'block';
-            imgElement.src = selectedQuizData[currentIndex].img;
+            imgElement.src = hasExt ? baseImg : baseImg + ".jpg"; // 우선 JPG로 호출
+            
             answerText.style.visibility = 'hidden'; 
             answerText.innerText = selectedQuizData[currentIndex].answer;
             
             timerBar.style.width = '100%';
             timerBar.style.backgroundColor = '#4caf50';
-
-            if (imgElement.complete) {
-                startTimer(LIMIT_SEC);
-            } else {
-                imgElement.onload = function() {
-                    startTimer(LIMIT_SEC);
-                }
-                imgElement.onerror = function() {
-                    startTimer(LIMIT_SEC); 
-                }
-            }
         }
 
         function startTimer(seconds) {
